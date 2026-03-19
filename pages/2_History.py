@@ -435,7 +435,7 @@ CREATE TABLE IF NOT EXISTS bookings (
 conn.commit()
 
 # =========================
-# سايدبار الكمبيوتر
+# السايدبار
 # =========================
 with st.sidebar:
     st.markdown(f"""
@@ -583,7 +583,7 @@ with st.container(border=True):
         st.markdown('<div class="warning-box">لا توجد حجوزات مطابقة للبحث أو الفلاتر الحالية.</div>', unsafe_allow_html=True)
     else:
         display_df = filtered_df.copy()
-        display_df = display_df.rename(columns={{
+        display_df = display_df.rename(columns={
             "id": "رقم الحجز",
             "customer_name": "اسم العميل",
             "phone": "رقم الهاتف",
@@ -598,7 +598,7 @@ with st.container(border=True):
             "base_price": "السعر الأساسي",
             "final_price": "السعر النهائي",
             "booking_time": "وقت الحجز"
-        }})
+        })
         st.dataframe(display_df, use_container_width=True)
 
 # =========================
