@@ -87,7 +87,7 @@ matches = [
 ]
 
 # =========================
-# CSS
+# التصميم
 # =========================
 st.markdown(f"""
 <style>
@@ -118,7 +118,7 @@ html, body, [class*="css"] {{
     color: white;
 }}
 
-/* السايدبار للكمبيوتر فقط */
+/* سايدبار الكمبيوتر */
 section[data-testid="stSidebar"] {{
     background: linear-gradient(180deg, #0b0b0b 0%, #151515 100%);
     border-left: 1px solid rgba(212,175,55,0.20);
@@ -302,8 +302,16 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     font-weight: 700;
 }}
 
-.mobile-nav-box {{
+.mobile-nav-only {{
     display: none;
+}}
+
+.mobile-nav-box {{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 22px;
+    padding: 14px 12px 6px 12px;
+    margin-bottom: 16px;
 }}
 
 .mobile-nav-title {{
@@ -312,6 +320,29 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     font-size: 16px;
     font-weight: 800;
     margin-bottom: 10px;
+}}
+
+.mobile-links {{
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}}
+
+.mobile-links a {{
+    text-decoration: none !important;
+    color: black !important;
+    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 800;
+    display: inline-block;
+    box-shadow: 0 0 14px rgba(212,175,55,0.20);
+}}
+
+.mobile-links a:hover {{
+    transform: translateY(-2px);
 }}
 
 .stButton > button {{
@@ -342,7 +373,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     opacity: 0.95;
 }}
 
-/* مهم: إخفاء شريط/زر السايدبار المزعج على الجوال */
+/* الجوال فقط */
 @media (max-width: 768px) {{
     section[data-testid="stSidebar"] {{
         display: none !important;
@@ -354,6 +385,10 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 
     button[kind="header"] {{
         display: none !important;
+    }}
+
+    .mobile-nav-only {{
+        display: block !important;
     }}
 
     .block-container {{
@@ -416,15 +451,6 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
         padding: 7px 10px !important;
     }}
 
-    .mobile-nav-box {{
-        display: block !important;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(212,175,55,0.25);
-        border-radius: 22px;
-        padding: 14px 12px 6px 12px;
-        margin-bottom: 16px;
-    }}
-
     .stButton > button {{
         min-height: 52px !important;
         font-size: 15px !important;
@@ -447,7 +473,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 """, unsafe_allow_html=True)
 
 # =========================
-# سايدبار للكمبيوتر
+# سايدبار الكمبيوتر
 # =========================
 with st.sidebar:
     st.markdown(f"""
@@ -464,19 +490,20 @@ with st.sidebar:
     st.markdown("راجع تفاصيل المباريات قبل الانتقال إلى الحجز.")
 
 # =========================
-# تنقل خاص بالجوال
+# تنقل الجوال فقط
 # =========================
-st.markdown('<div class="mobile-nav-box"><div class="mobile-nav-title">التنقل السريع</div></div>', unsafe_allow_html=True)
-m1, m2, m3 = st.columns(3)
-with m1:
-    if st.button("🏠 الرئيسية", key="mob_home_match"):
-        st.switch_page("app.py")
-with m2:
-    if st.button("🎟️ الحجز", key="mob_booking_match"):
-        st.switch_page("pages/1_Booking.py")
-with m3:
-    if st.button("☎️ الدعم", key="mob_support_match"):
-        st.switch_page("pages/5_Support.py")
+st.markdown("""
+<div class="mobile-nav-only">
+    <div class="mobile-nav-box">
+        <div class="mobile-nav-title">التنقل السريع</div>
+        <div class="mobile-links">
+            <a href="/">الرئيسية</a>
+            <a href="/Booking">الحجز</a>
+            <a href="/Support">الدعم</a>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # =========================
 # الهيدر
