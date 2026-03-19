@@ -73,7 +73,7 @@ matches = [
     {
         "image": assets_dir / "match4.png",
         "name": "مانشستر سيتي × ليفربول",
-        "type": "ودية",
+        "type": "نهائي المخانيث اكالين الخصاوي",
         "competition": "International Friendly",
         "stadium": "ويمبلي",
         "city": "لندن",
