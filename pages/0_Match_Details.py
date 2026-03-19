@@ -87,7 +87,7 @@ matches = [
 ]
 
 # =========================
-# التصميم
+# CSS
 # =========================
 st.markdown(f"""
 <style>
@@ -118,6 +118,7 @@ html, body, [class*="css"] {{
     color: white;
 }}
 
+/* السايدبار للكمبيوتر فقط */
 section[data-testid="stSidebar"] {{
     background: linear-gradient(180deg, #0b0b0b 0%, #151515 100%);
     border-left: 1px solid rgba(212,175,55,0.20);
@@ -183,7 +184,7 @@ section[data-testid="stSidebar"] {{
 }}
 
 .block-container {{
-    padding-top: 1.2rem;
+    padding-top: 1.1rem;
     padding-bottom: 2rem;
     max-width: 1280px;
 }}
@@ -192,13 +193,12 @@ section[data-testid="stSidebar"] {{
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: -5px;
-    margin-bottom: -16px;
-    animation: fadeUp 0.7s ease;
+    margin-top: -4px;
+    margin-bottom: -10px;
 }}
 
 .logo-wrap img {{
-    width: 220px;
+    width: 210px;
     max-width: 100%;
     filter: drop-shadow(0px 0px 20px rgba(212,175,55,0.68));
 }}
@@ -214,7 +214,6 @@ section[data-testid="stSidebar"] {{
     box-shadow: 0 12px 30px rgba(0,0,0,0.36);
     margin-top: 0;
     margin-bottom: 22px;
-    animation: fadeUp 0.8s ease;
 }}
 
 .hero-title {{
@@ -246,16 +245,16 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     border: 1px solid rgba(212,175,55,0.25) !important;
     border-radius: 24px !important;
     box-shadow: 0 8px 20px rgba(0,0,0,0.28);
-    animation: fadeUp 0.9s ease;
     overflow: hidden !important;
 }}
 
 .match-title {{
     color: #D4AF37;
-    font-size: 25px;
+    font-size: 24px;
     font-weight: 900;
     text-align: center;
-    margin: 10px 0 18px 0;
+    margin: 12px 0 16px 0;
+    line-height: 1.6;
 }}
 
 .info-line {{
@@ -303,6 +302,18 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     font-weight: 700;
 }}
 
+.mobile-nav-box {{
+    display: none;
+}}
+
+.mobile-nav-title {{
+    color: #D4AF37;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}}
+
 .stButton > button {{
     width: 100%;
     min-height: 60px;
@@ -318,8 +329,8 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 }}
 
 .stButton > button:hover {{
-    transform: translateY(-4px) scale(1.01);
-    box-shadow: 0 0 28px rgba(212,175,55,0.42);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 0 24px rgba(212,175,55,0.36);
 }}
 
 .footer {{
@@ -331,21 +342,19 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     opacity: 0.95;
 }}
 
-@keyframes fadeUp {{
-    from {{
-        opacity: 0;
-        transform: translateY(14px);
-    }}
-    to {{
-        opacity: 1;
-        transform: translateY(0);
-    }}
-}}
-
-/* =========================
-   دعم الجوال
-========================= */
+/* مهم: إخفاء شريط/زر السايدبار المزعج على الجوال */
 @media (max-width: 768px) {{
+    section[data-testid="stSidebar"] {{
+        display: none !important;
+    }}
+
+    [data-testid="stSidebarCollapsedControl"] {{
+        display: none !important;
+    }}
+
+    button[kind="header"] {{
+        display: none !important;
+    }}
 
     .block-container {{
         padding-top: 0.7rem !important;
@@ -356,12 +365,12 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     }}
 
     .logo-wrap {{
-        margin-bottom: -6px !important;
+        margin-bottom: -4px !important;
     }}
 
     .logo-wrap img {{
-        width: 170px !important;
-        max-width: 88% !important;
+        width: 165px !important;
+        max-width: 86% !important;
     }}
 
     .hero-box {{
@@ -388,7 +397,6 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
         font-size: 18px !important;
         line-height: 1.5 !important;
         margin: 8px 0 12px 0 !important;
-        word-break: break-word !important;
     }}
 
     .info-line {{
@@ -408,6 +416,15 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
         padding: 7px 10px !important;
     }}
 
+    .mobile-nav-box {{
+        display: block !important;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(212,175,55,0.25);
+        border-radius: 22px;
+        padding: 14px 12px 6px 12px;
+        margin-bottom: 16px;
+    }}
+
     .stButton > button {{
         min-height: 52px !important;
         font-size: 15px !important;
@@ -421,8 +438,6 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
         font-size: 13px !important;
         margin-top: 16px !important;
     }}
-
-    
 }}
 </style>
 
@@ -432,7 +447,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 """, unsafe_allow_html=True)
 
 # =========================
-# السايدبار
+# سايدبار للكمبيوتر
 # =========================
 with st.sidebar:
     st.markdown(f"""
@@ -444,10 +459,24 @@ with st.sidebar:
         <div class="sidebar-brand-subtitle">Smart Stadium Ticket Pricing System</div>
     </div>
     """, unsafe_allow_html=True)
-
     st.markdown("---")
     st.markdown("### Match Details")
     st.markdown("راجع تفاصيل المباريات قبل الانتقال إلى الحجز.")
+
+# =========================
+# تنقل خاص بالجوال
+# =========================
+st.markdown('<div class="mobile-nav-box"><div class="mobile-nav-title">التنقل السريع</div></div>', unsafe_allow_html=True)
+m1, m2, m3 = st.columns(3)
+with m1:
+    if st.button("🏠 الرئيسية", key="mob_home_match"):
+        st.switch_page("app.py")
+with m2:
+    if st.button("🎟️ الحجز", key="mob_booking_match"):
+        st.switch_page("pages/1_Booking.py")
+with m3:
+    if st.button("☎️ الدعم", key="mob_support_match"):
+        st.switch_page("pages/5_Support.py")
 
 # =========================
 # الهيدر
