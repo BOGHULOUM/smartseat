@@ -56,6 +56,7 @@ html, body, [class*="css"] {{
     color: white;
 }}
 
+/* سايدبار الكمبيوتر */
 section[data-testid="stSidebar"] {{
     background: linear-gradient(180deg, #0b0b0b 0%, #151515 100%);
     border-left: 1px solid rgba(212,175,55,0.20);
@@ -132,7 +133,6 @@ section[data-testid="stSidebar"] {{
     align-items: center;
     margin-top: -5px;
     margin-bottom: -16px;
-    animation: fadeUp 0.7s ease;
 }}
 
 .logo-wrap img {{
@@ -150,7 +150,6 @@ section[data-testid="stSidebar"] {{
     box-shadow: 0 12px 30px rgba(0,0,0,0.42);
     margin-top: 0px;
     margin-bottom: 22px;
-    animation: fadeUp 0.8s ease;
 }}
 
 .hero-title {{
@@ -189,7 +188,6 @@ section[data-testid="stSidebar"] {{
     border-radius: 24px;
     padding: 24px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.28);
-    animation: fadeUp 0.9s ease;
     transition: all 0.25s ease;
     height: 100%;
 }}
@@ -212,11 +210,55 @@ section[data-testid="stSidebar"] {{
     font-size: 18px;
     line-height: 2;
     text-align: center;
+    word-break: break-word;
 }}
 
 .contact-label {{
     color: #D4AF37;
     font-weight: 800;
+}}
+
+.mobile-nav-only {{
+    display: none;
+}}
+
+.mobile-nav-box {{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 22px;
+    padding: 14px 12px 6px 12px;
+    margin-bottom: 16px;
+}}
+
+.mobile-nav-title {{
+    color: #D4AF37;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}}
+
+.mobile-links {{
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}}
+
+.mobile-links a {{
+    text-decoration: none !important;
+    color: black !important;
+    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 800;
+    display: inline-block;
+    box-shadow: 0 0 14px rgba(212,175,55,0.20);
+}}
+
+.mobile-links a:hover {{
+    transform: translateY(-2px);
 }}
 
 label {{
@@ -243,7 +285,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     border: 1px solid rgba(212,175,55,0.25) !important;
     border-radius: 24px !important;
     box-shadow: 0 8px 20px rgba(0,0,0,0.28);
-    animation: fadeUp 1s ease;
+    overflow: hidden !important;
 }}
 
 .stButton > button {{
@@ -261,8 +303,8 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 }}
 
 .stButton > button:hover {{
-    transform: translateY(-4px) scale(1.01);
-    box-shadow: 0 0 28px rgba(212,175,55,0.42);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 0 24px rgba(212,175,55,0.36);
 }}
 
 .success-box {{
@@ -275,7 +317,6 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     font-size: 18px;
     font-weight: 700;
     margin-top: 18px;
-    animation: fadeUp 0.6s ease;
 }}
 
 .footer {{
@@ -287,14 +328,84 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     opacity: 0.95;
 }}
 
-@keyframes fadeUp {{
-    from {{
-        opacity: 0;
-        transform: translateY(14px);
+/* الجوال فقط */
+@media (max-width: 768px) {{
+    section[data-testid="stSidebar"] {{
+        display: none !important;
     }}
-    to {{
-        opacity: 1;
-        transform: translateY(0);
+
+    [data-testid="stSidebarCollapsedControl"] {{
+        display: none !important;
+    }}
+
+    button[kind="header"] {{
+        display: none !important;
+    }}
+
+    .mobile-nav-only {{
+        display: block !important;
+    }}
+
+    .block-container {{
+        padding-top: 0.7rem !important;
+        padding-bottom: 1rem !important;
+        padding-right: 0.7rem !important;
+        padding-left: 0.7rem !important;
+        max-width: 100% !important;
+    }}
+
+    .logo-wrap {{
+        margin-top: 0 !important;
+        margin-bottom: -6px !important;
+    }}
+
+    .logo-wrap img {{
+        width: 160px !important;
+        max-width: 86% !important;
+    }}
+
+    .hero-box {{
+        padding: 18px 14px !important;
+        border-radius: 22px !important;
+        margin-bottom: 16px !important;
+    }}
+
+    .hero-title {{
+        font-size: 28px !important;
+        line-height: 1.3 !important;
+    }}
+
+    .hero-subtitle {{
+        font-size: 15px !important;
+    }}
+
+    .hero-text {{
+        font-size: 13px !important;
+        line-height: 1.9 !important;
+    }}
+
+    .section-title {{
+        font-size: 22px !important;
+        margin-bottom: 8px !important;
+    }}
+
+    .contact-title {{
+        font-size: 18px !important;
+    }}
+
+    .contact-line {{
+        font-size: 14px !important;
+        line-height: 1.9 !important;
+    }}
+
+    .success-box {{
+        font-size: 14px !important;
+        line-height: 1.8 !important;
+    }}
+
+    .footer {{
+        font-size: 13px !important;
+        margin-top: 16px !important;
     }}
 }}
 </style>
@@ -321,6 +432,22 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("### Customer Support")
     st.markdown("لأي مشكلة أو استفسار أو شكوى، تواصل معنا مباشرة.")
+
+# =========================
+# تنقل الجوال فقط
+# =========================
+st.markdown("""
+<div class="mobile-nav-only">
+    <div class="mobile-nav-box">
+        <div class="mobile-nav-title">التنقل السريع</div>
+        <div class="mobile-links">
+            <a href="/">الرئيسية</a>
+            <a href="/Booking">الحجز</a>
+            <a href="/History">السجل</a>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # =========================
 # الهيدر
