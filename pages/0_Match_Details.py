@@ -25,13 +25,13 @@ def get_base64(img_path):
 logo_base64 = get_base64(logo_path)
 
 # =========================
-# بيانات المباريات (مصححة)
+# بيانات المباريات
 # =========================
 matches = [
     {
         "image": assets_dir / "match1.png",
         "name": "برشلونة × ريال مدريد",
-        "type": "نهائي",
+        "type": "نهائي كأس",
         "competition": "كأس السوبر الإسباني",
         "stadium": "ملعب الملك فهد الدولي",
         "city": "الرياض",
@@ -87,106 +87,504 @@ matches = [
 ]
 
 # =========================
-# التصميم (نفس القديم)
+# التصميم
 # =========================
 st.markdown(f"""
 <style>
-html, body {{
+html, body, [class*="css"] {{
     direction: rtl;
-    font-family: 'Segoe UI';
+    font-family: 'Segoe UI', sans-serif;
 }}
 
 .stApp {{
-    background: linear-gradient(135deg,#050505,#111111);
+    background:
+        radial-gradient(circle at 15% 20%, rgba(212,175,55,0.08), transparent 30%),
+        radial-gradient(circle at 85% 75%, rgba(212,175,55,0.06), transparent 30%),
+        repeating-linear-gradient(
+            135deg,
+            rgba(212,175,55,0.045) 0px,
+            rgba(212,175,55,0.045) 2px,
+            transparent 2px,
+            transparent 40px
+        ),
+        repeating-linear-gradient(
+            -135deg,
+            rgba(212,175,55,0.025) 0px,
+            rgba(212,175,55,0.025) 2px,
+            transparent 2px,
+            transparent 48px
+        ),
+        linear-gradient(135deg, #050505 0%, #0a0a0a 45%, #111111 100%);
     color: white;
 }}
 
+/* سايدبار الكمبيوتر */
+section[data-testid="stSidebar"] {{
+    background: linear-gradient(180deg, #0b0b0b 0%, #151515 100%);
+    border-left: 1px solid rgba(212,175,55,0.20);
+}}
+
+.sidebar-brand-card {{
+    background:
+        radial-gradient(circle at 20% 25%, rgba(0,0,0,0.08), transparent 28%),
+        radial-gradient(circle at 80% 75%, rgba(0,0,0,0.06), transparent 30%),
+        repeating-linear-gradient(
+            135deg,
+            rgba(0,0,0,0.07) 0px,
+            rgba(0,0,0,0.07) 2px,
+            transparent 2px,
+            transparent 26px
+        ),
+        repeating-linear-gradient(
+            -135deg,
+            rgba(0,0,0,0.045) 0px,
+            rgba(0,0,0,0.045) 2px,
+            transparent 2px,
+            transparent 34px
+        ),
+        linear-gradient(135deg, #f4d46a 0%, #d4af37 55%, #b78d1d 100%);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 24px;
+    padding: 22px 16px 18px 16px;
+    text-align: center;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.30);
+    margin-bottom: 10px;
+}}
+
+.sidebar-logo-wrap {{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+}}
+
+.sidebar-logo {{
+    width: 120px;
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0px 4px 10px rgba(0,0,0,0.20));
+}}
+
+.sidebar-brand-title {{
+    color: #111111;
+    font-size: 30px;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 6px;
+    line-height: 1.1;
+}}
+
+.sidebar-brand-subtitle {{
+    color: #181818;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.7;
+}}
+
 .block-container {{
-    max-width: 1200px;
+    padding-top: 1.1rem;
+    padding-bottom: 2rem;
+    max-width: 1280px;
+}}
+
+.logo-wrap {{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -4px;
+    margin-bottom: -10px;
+}}
+
+.logo-wrap img {{
+    width: 210px;
+    max-width: 100%;
+    filter: drop-shadow(0px 0px 20px rgba(212,175,55,0.68));
+}}
+
+.hero-box {{
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(212,175,55,0.30);
+    border-radius: 30px;
+    padding: 24px 30px;
+    text-align: center;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.36);
+    margin-top: 0;
+    margin-bottom: 22px;
+}}
+
+.hero-title {{
+    font-size: 42px;
+    font-weight: 900;
+    color: #D4AF37;
+    margin-bottom: 4px;
+}}
+
+.hero-subtitle {{
+    font-size: 18px;
+    color: #E6C86E;
+    font-weight: 700;
+    margin-bottom: 8px;
+}}
+
+.hero-text {{
+    color: #E6C86E;
+    font-size: 16px;
+    line-height: 1.9;
+    max-width: 900px;
+    margin: auto;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"] {{
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(212,175,55,0.25) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+    overflow: hidden !important;
 }}
 
 .match-title {{
     color: #D4AF37;
-    font-size: 22px;
-    font-weight: bold;
+    font-size: 24px;
+    font-weight: 900;
     text-align: center;
+    margin: 12px 0 16px 0;
+    line-height: 1.6;
 }}
 
 .info-line {{
     color: #F0D98A;
+    font-size: 16px;
+    line-height: 1.9;
+    margin: 6px 0;
+    word-break: break-word;
+}}
+
+.info-label {{
+    color: #D4AF37;
+    font-weight: 800;
+}}
+
+.note-box {{
+    background: linear-gradient(135deg, rgba(45,35,10,0.95), rgba(70,55,15,0.92));
+    border: 1px solid rgba(212,175,55,0.30);
+    border-radius: 18px;
+    padding: 14px;
+    text-align: center;
+    color: #F0D98A;
     font-size: 15px;
-    margin: 4px 0;
+    font-weight: 700;
+    margin-top: 14px;
+    line-height: 1.8;
 }}
 
-.status {{
-    margin-top:10px;
+.status-row {{
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    margin-bottom: 8px;
 }}
 
-.btn {{
-    background: gold;
+.status-pill {{
+    background: rgba(255,215,0,0.10);
+    border: 1px solid rgba(212,175,55,0.30);
+    color: #E6C86E;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+}}
+
+.mobile-nav-only {{
+    display: none;
+}}
+
+.mobile-nav-box {{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 22px;
+    padding: 14px 12px 6px 12px;
+    margin-bottom: 16px;
+}}
+
+.mobile-nav-title {{
+    color: #D4AF37;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}}
+
+.mobile-links {{
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}}
+
+.mobile-links a {{
+    text-decoration: none !important;
+    color: black !important;
+    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 800;
+    display: inline-block;
+    box-shadow: 0 0 14px rgba(212,175,55,0.20);
+}}
+
+.mobile-links a:hover {{
+    transform: translateY(-2px);
+}}
+
+.stButton > button {{
+    width: 100%;
+    min-height: 60px;
+    border: none;
+    border-radius: 18px;
+    padding: 12px 18px;
+    font-size: 18px;
+    font-weight: 800;
     color: black;
+    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
+    box-shadow: 0 0 18px rgba(212,175,55,0.22);
+    transition: all 0.25s ease;
+}}
+
+.stButton > button:hover {{
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 0 24px rgba(212,175,55,0.36);
 }}
 
 .footer {{
-    text-align:center;
-    margin-top:30px;
-    color:#D4AF37;
+    text-align: center;
+    color: #D4AF37;
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 24px;
+    opacity: 0.95;
 }}
 
-@media (max-width:768px) {{
+/* الجوال فقط */
+@media (max-width: 768px) {{
     section[data-testid="stSidebar"] {{
-        display:none;
+        display: none !important;
+    }}
+
+    [data-testid="stSidebarCollapsedControl"] {{
+        display: none !important;
+    }}
+
+    button[kind="header"] {{
+        display: none !important;
+    }}
+
+    .mobile-nav-only {{
+        display: block !important;
+    }}
+
+    .block-container {{
+        padding-top: 0.7rem !important;
+        padding-bottom: 1rem !important;
+        padding-right: 0.7rem !important;
+        padding-left: 0.7rem !important;
+        max-width: 100% !important;
+    }}
+
+    .logo-wrap {{
+        margin-bottom: -4px !important;
+    }}
+
+    .logo-wrap img {{
+        width: 165px !important;
+        max-width: 86% !important;
+    }}
+
+    .hero-box {{
+        padding: 18px 14px !important;
+        border-radius: 22px !important;
+        margin-bottom: 16px !important;
+    }}
+
+    .hero-title {{
+        font-size: 28px !important;
+        line-height: 1.3 !important;
+    }}
+
+    .hero-subtitle {{
+        font-size: 15px !important;
+    }}
+
+    .hero-text {{
+        font-size: 13px !important;
+        line-height: 1.9 !important;
+    }}
+
+    .match-title {{
+        font-size: 18px !important;
+        line-height: 1.5 !important;
+        margin: 8px 0 12px 0 !important;
+    }}
+
+    .info-line {{
+        font-size: 13px !important;
+        line-height: 1.8 !important;
+        text-align: right !important;
+    }}
+
+    .note-box {{
+        font-size: 13px !important;
+        line-height: 1.8 !important;
+        padding: 12px !important;
+    }}
+
+    .status-pill {{
+        font-size: 12px !important;
+        padding: 7px 10px !important;
+    }}
+
+    .stButton > button {{
+        min-height: 52px !important;
+        font-size: 15px !important;
+        border-radius: 15px !important;
+        padding: 8px 10px !important;
+        white-space: normal !important;
+        line-height: 1.35 !important;
+    }}
+
+    .footer {{
+        font-size: 13px !important;
+        margin-top: 16px !important;
     }}
 }}
 </style>
 
-<div style="text-align:center">
-<img src="data:image/png;base64,{logo_base64}" width="180">
+<div class="logo-wrap">
+    <img src="data:image/png;base64,{logo_base64}">
 </div>
 """, unsafe_allow_html=True)
 
 # =========================
-# العنوان
+# سايدبار الكمبيوتر
+# =========================
+with st.sidebar:
+    st.markdown(f"""
+    <div class="sidebar-brand-card">
+        <div class="sidebar-logo-wrap">
+            <img src="data:image/png;base64,{logo_base64}" class="sidebar-logo">
+        </div>
+        <div class="sidebar-brand-title">SmartSeat</div>
+        <div class="sidebar-brand-subtitle">Smart Stadium Ticket Pricing System</div>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown("### Match Details")
+    st.markdown("راجع تفاصيل المباريات قبل الانتقال إلى الحجز.")
+
+# =========================
+# تنقل الجوال فقط
 # =========================
 st.markdown("""
-<div style="text-align:center">
-<h1 style="color:#D4AF37;">تفاصيل المباريات</h1>
-<p style="color:#E6C86E;">Match Details</p>
+<div class="mobile-nav-only">
+    <div class="mobile-nav-box">
+        <div class="mobile-nav-title">التنقل السريع</div>
+        <div class="mobile-links">
+            <a href="/">الرئيسية</a>
+            <a href="/Booking">الحجز</a>
+            <a href="/Support">الدعم</a>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# =========================
+# الهيدر
+# =========================
+st.markdown("""
+<div class="hero-box">
+    <div class="hero-title">تفاصيل المباريات</div>
+    <div class="hero-subtitle">Match Details</div>
+    <div class="hero-text">
+        قبل الحجز، يمكنك هنا الاطلاع على تفاصيل كل مباراة من حيث نوعها، البطولة،
+        الملعب، الحكم، وتوقيت المباراة، حتى تكون لديك صورة واضحة قبل إتمام الحجز.
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
 # =========================
 # عرض المباريات
 # =========================
-col1, col2 = st.columns(2)
+col1, col2 = st.columns(2, gap="large")
 
 for i, match in enumerate(matches):
-    with (col1 if i % 2 == 0 else col2):
-        with st.container():
-            st.image(str(match["image"]), use_container_width=True)
+    target_col = col1 if i % 2 == 0 else col2
 
-            st.markdown(f"<div class='match-title'>{match['name']}</div>", unsafe_allow_html=True)
+    with target_col:
+        with st.container(border=True):
+            if match["image"].exists():
+                st.image(str(match["image"]), use_container_width=True)
+            else:
+                st.warning(f"الصورة غير موجودة: {match['image'].name}")
 
-            st.markdown(f"<div class='info-line'>نوع المباراة: {match['type']}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='info-line'>البطولة: {match['competition']}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='info-line'>الملعب: {match['stadium']}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='info-line'>المدينة: {match['city']}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='info-line'>الحكم: {match['referee']}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='info-line'>التاريخ: {match['datetime']}</div>", unsafe_allow_html=True)
+            st.markdown(
+                f'<div class="match-title">{match["name"]}</div>',
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f'<div class="info-line"><span class="info-label">نوع المباراة:</span> {match["type"]}</div>',
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f'<div class="info-line"><span class="info-label">البطولة:</span> {match["competition"]}</div>',
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f'<div class="info-line"><span class="info-label">الملعب:</span> {match["stadium"]}</div>',
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f'<div class="info-line"><span class="info-label">المدينة:</span> {match["city"]}</div>',
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f'<div class="info-line"><span class="info-label">الحكم:</span> {match["referee"]}</div>',
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f'<div class="info-line"><span class="info-label">التاريخ والوقت:</span> {match["datetime"]}</div>',
+                unsafe_allow_html=True
+            )
 
             st.markdown(f"""
-            <div class='status'>
-            فتح البوابات: {match['gates_open']} | {match['demand']}
+            <div class="status-row">
+                <div class="status-pill">فتح البوابات: {match["gates_open"]}</div>
+                <div class="status-pill">{match["demand"]}</div>
             </div>
             """, unsafe_allow_html=True)
 
-            st.markdown(f"<div class='info-line'>{match['note']}</div>", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="note-box">
+                {match["note"]}<br><br>{match["parking"]}
+            </div>
+            """, unsafe_allow_html=True)
 
-            if st.button(f"🎟️ احجز الآن - {match['name']}", key=i):
+            if st.button(f"🎟️ احجز الآن - {match['name']}", key=f"book_{i}"):
                 st.session_state["selected_match"] = match["name"]
                 st.switch_page("pages/1_Booking.py")
 
 # =========================
 # الفوتر
 # =========================
-st.markdown("<div class='footer'>SmartSeat • Final Year Project</div>", unsafe_allow_html=True)
+st.markdown("""
+<div class="footer">
+    SmartSeat Match Details • Final Year Project
+</div>
+""", unsafe_allow_html=True)
