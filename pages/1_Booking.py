@@ -1,114 +1,19 @@
 import streamlit as st
 from pathlib import Path
-import sqlite3
 import base64
-from datetime import date, datetime
-from io import BytesIO
-import qrcode
-import time
-
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
-from reportlab.lib.utils import ImageReader
 
 # =========================
 # إعداد الصفحة
 # =========================
 base_dir = Path(__file__).parent.parent
-logo_path = base_dir / "assets" / "logo.png"
-db_path = base_dir / "tickets.db"
+assets_dir = base_dir / "assets"
+logo_path = assets_dir / "logo.png"
 
 st.set_page_config(
-    page_title="SmartSeat - Booking",
+    page_title="SmartSeat - Match Details",
     page_icon=str(logo_path),
     layout="wide"
 )
-
-# =========================
-# قاعدة البيانات
-# =========================
-conn = sqlite3.connect(db_path, check_same_thread=False)
-cursor = conn.cursor()
-
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS bookings (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    customer_name TEXT,
-    phone TEXT,
-    booking_date TEXT,
-    match_name TEXT,
-    seat_type TEXT,
-    seat_section TEXT,
-    ticket_count INTEGER,
-    demand_level INTEGER,
-    payment_method TEXT,
-    discount_code TEXT,
-    base_price REAL,
-    final_price REAL,
-    booking_time TEXT
-)
-""")
-
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS pricing_settings (
-    id INTEGER PRIMARY KEY CHECK (id = 1),
-    elclasico_price REAL,
-    kuwait_qadsia_price REAL,
-    arabi_salmiya_price REAL,
-    city_liverpool_price REAL,
-    regular_extra REAL,
-    premium_extra REAL,
-    vip_extra REAL,
-    section_a_extra REAL,
-    section_b_extra REAL,
-    section_c_extra REAL
-)
-""")
-
-cursor.execute("SELECT COUNT(*) FROM pricing_settings WHERE id = 1")
-exists = cursor.fetchone()[0]
-
-if exists == 0:
-    cursor.execute("""
-        INSERT INTO pricing_settings (
-            id,
-            elclasico_price,
-            kuwait_qadsia_price,
-            arabi_salmiya_price,
-            city_liverpool_price,
-            regular_extra,
-            premium_extra,
-            vip_extra,
-            section_a_extra,
-            section_b_extra,
-            section_c_extra
-        ) VALUES (1, 28, 22, 18, 26, 0, 8, 18, 10, 6, 3)
-    """)
-conn.commit()
-
-# =========================
-# قراءة إعدادات الأسعار
-# =========================
-pricing_row = cursor.execute("SELECT * FROM pricing_settings WHERE id = 1").fetchone()
-
-pricing = {
-    "برشلونة × ريال مدريد": float(pricing_row[1]),
-    "الكويت × القادسية": float(pricing_row[2]),
-    "العربي × السالمية": float(pricing_row[3]),
-    "مانشستر سيتي × ليفربول": float(pricing_row[4]),
-}
-
-seat_prices = {
-    "Regular": float(pricing_row[5]),
-    "Premium": float(pricing_row[6]),
-    "VIP": float(pricing_row[7]),
-}
-
-section_prices = {
-    "A": float(pricing_row[8]),
-    "B": float(pricing_row[9]),
-    "C": float(pricing_row[10]),
-}
 
 # =========================
 # تحويل اللوقو إلى base64
@@ -118,6 +23,68 @@ def get_base64(img_path):
         return base64.b64encode(f.read()).decode()
 
 logo_base64 = get_base64(logo_path)
+
+# =========================
+# بيانات المباريات
+# =========================
+matches = [
+    {
+        "image": assets_dir / "match1.png",
+        "name": "الكويت × القادسية",
+        "type": "دوري",
+        "competition": "الدوري الكويتي الممتاز",
+        "stadium": "ملعب جابر الأحمد الدولي",
+        "city": "الكويت",
+        "referee": "عبدالرحمن الجاسم",
+        "datetime": "22-05-2026 • 19:45",
+        "gates_open": "17:45",
+        "parking": "مواقف الجماهير متوفرة بالقرب من الملعب",
+        "demand": "الطلب مرتفع",
+        "note": "ديربي كويتي جماهيري متوقع له حضور قوي وأجواء حماسية كبيرة."
+    },
+    {
+        "image": assets_dir / "match2.png",
+        "name": "العربي × السالمية",
+        "type": "كأس",
+        "competition": "كأس الأمير",
+        "stadium": "ملعب صباح السالم",
+        "city": "الكويت",
+        "referee": "أحمد العلي",
+        "datetime": "25-05-2026 • 18:30",
+        "gates_open": "16:30",
+        "parking": "تتوفر مواقف خارجية حول الاستاد",
+        "demand": "الطلب متوسط إلى مرتفع",
+        "note": "مواجهة مهمة في بطولة الكأس وفرص التأهل فيها كبيرة للطرفين."
+    },
+    {
+        "image": assets_dir / "match3.png",
+        "name": "برشلونة × ريال مدريد",
+        "type": "نهائي كأس",
+        "competition": "كأس السوبر الإسباني",
+        "stadium": "ملعب الملك فهد الدولي",
+        "city": "الرياض",
+        "referee": "Michael Oliver",
+        "datetime": "18-05-2026 • 20:30",
+        "gates_open": "18:30",
+        "parking": "مواقف VIP ومواقف عامة متوفرة",
+        "demand": "الطلب مرتفع جداً",
+        "note": "مواجهة كلاسيكية نارية بين عملاقين من أكبر أندية العالم."
+    },
+    {
+        "image": assets_dir / "match4.png",
+        "name": "مانشستر سيتي × ليفربول",
+        "type": "ودية",
+        "competition": "International Friendly",
+        "stadium": "ويمبلي",
+        "city": "لندن",
+        "referee": "Anthony Taylor",
+        "datetime": "30-05-2026 • 21:00",
+        "gates_open": "19:00",
+        "parking": "المواقف محدودة ويُنصح بالحضور المبكر",
+        "demand": "الطلب مرتفع جداً",
+        "note": "قمة إنجليزية ممتعة بين فريقين كبيرين في مواجهة استعراضية قوية."
+    }
+]
 
 # =========================
 # التصميم
@@ -218,7 +185,7 @@ section[data-testid="stSidebar"] {{
 .block-container {{
     padding-top: 1.2rem;
     padding-bottom: 2rem;
-    max-width: 1150px;
+    max-width: 1280px;
 }}
 
 .logo-wrap {{
@@ -231,19 +198,21 @@ section[data-testid="stSidebar"] {{
 }}
 
 .logo-wrap img {{
-    width: 260px;
+    width: 220px;
     max-width: 100%;
     filter: drop-shadow(0px 0px 20px rgba(212,175,55,0.68));
 }}
 
 .hero-box {{
-    background: linear-gradient(135deg, rgba(18,18,18,0.95), rgba(30,30,30,0.92));
-    border: 1px solid rgba(212,175,55,0.34);
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(212,175,55,0.30);
     border-radius: 30px;
     padding: 24px 30px;
     text-align: center;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.42);
-    margin-top: 0px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.36);
+    margin-top: 0;
     margin-bottom: 22px;
     animation: fadeUp 0.8s ease;
 }}
@@ -266,120 +235,81 @@ section[data-testid="stSidebar"] {{
     color: #E6C86E;
     font-size: 16px;
     line-height: 1.9;
-    max-width: 850px;
+    max-width: 900px;
     margin: auto;
 }}
 
-.section-title {{
-    color: #D4AF37;
-    font-size: 30px;
-    font-weight: 900;
-    text-align: center;
-    margin-bottom: 10px;
-}}
-
-.summary-line {{
-    color: #F0D98A;
-    font-size: 18px;
-    margin: 12px 0;
-    line-height: 1.9;
-}}
-
-.price-box {{
-    background: linear-gradient(180deg, rgba(255,215,0,0.14), rgba(212,175,55,0.08));
-    border: 1px solid rgba(212,175,55,0.35);
-    border-radius: 22px;
-    padding: 22px;
-    text-align: center;
-    margin-top: 18px;
-    box-shadow: 0 0 18px rgba(212,175,55,0.16);
-    animation: glowPulse 2.2s infinite ease-in-out;
-}}
-
-.price-label {{
-    color: #E6C86E;
-    font-size: 18px;
-    margin-bottom: 8px;
-}}
-
-.price-number {{
-    color: #FFD700;
-    font-size: 42px;
-    font-weight: 900;
-    text-shadow: 0 0 12px rgba(212,175,55,0.18);
-}}
-
-.small-note {{
-    color: #D9C27A;
-    font-size: 14px;
-    text-align: center;
-    margin-top: 8px;
-}}
-
-.gold-center {{
-    color: #D4AF37 !important;
-    text-align: center;
-    font-weight: 800;
-}}
-
-.gold-caption {{
-    color: #E6C86E !important;
-    text-align: center;
-    font-size: 15px;
-    margin-top: 8px;
-}}
-
-label {{
-    color: #E6C86E !important;
-    font-weight: 700 !important;
-}}
-
-.stSlider p {{
-    color: #E6C86E !important;
-}}
-
-.stDateInput > div > div,
-.stTextInput > div > div,
-.stNumberInput > div > div,
-div[data-baseweb="select"] > div {{
-    background-color: rgba(15,15,15,0.95) !important;
-    border-radius: 16px !important;
-    border: 1px solid rgba(212,175,55,0.25) !important;
-    transition: all 0.25s ease !important;
-}}
-
-.stDateInput > div > div:hover,
-.stTextInput > div > div:hover,
-.stNumberInput > div > div:hover,
-div[data-baseweb="select"] > div:hover {{
-    box-shadow: 0 0 14px rgba(212,175,55,0.25) !important;
-    border: 1px solid rgba(212,175,55,0.45) !important;
-}}
-
-input {{
-    color: white !important;
-}}
-
-hr {{
-    border: 1px solid rgba(212,175,55,0.18);
-    margin: 10px 0 18px 0;
-}}
-
 div[data-testid="stVerticalBlockBorderWrapper"] {{
-    background: rgba(255,255,255,0.03);
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(212,175,55,0.25) !important;
     border-radius: 24px !important;
     box-shadow: 0 8px 20px rgba(0,0,0,0.28);
     animation: fadeUp 0.9s ease;
+    overflow: hidden !important;
+}}
+
+.match-title {{
+    color: #D4AF37;
+    font-size: 25px;
+    font-weight: 900;
+    text-align: center;
+    margin: 10px 0 18px 0;
+}}
+
+.info-line {{
+    color: #F0D98A;
+    font-size: 16px;
+    line-height: 1.9;
+    margin: 6px 0;
+    word-break: break-word;
+}}
+
+.info-label {{
+    color: #D4AF37;
+    font-weight: 800;
+}}
+
+.note-box {{
+    background: linear-gradient(135deg, rgba(45,35,10,0.95), rgba(70,55,15,0.92));
+    border: 1px solid rgba(212,175,55,0.30);
+    border-radius: 18px;
+    padding: 14px;
+    text-align: center;
+    color: #F0D98A;
+    font-size: 15px;
+    font-weight: 700;
+    margin-top: 14px;
+    line-height: 1.8;
+}}
+
+.status-row {{
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    margin-bottom: 8px;
+}}
+
+.status-pill {{
+    background: rgba(255,215,0,0.10);
+    border: 1px solid rgba(212,175,55,0.30);
+    color: #E6C86E;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
 }}
 
 .stButton > button {{
     width: 100%;
-    min-height: 64px;
+    min-height: 60px;
     border: none;
     border-radius: 18px;
     padding: 12px 18px;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 800;
     color: black;
     background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
@@ -389,24 +319,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 
 .stButton > button:hover {{
     transform: translateY(-4px) scale(1.01);
-    box-shadow: 0 0 26px rgba(212,175,55,0.42);
-}}
-
-.success-box {{
-    background: linear-gradient(135deg, rgba(20,55,20,0.95), rgba(35,85,35,0.92));
-    border: 1px solid rgba(80,200,120,0.35);
-    border-radius: 22px;
-    padding: 18px;
-    text-align: center;
-    color: #d7ffd7;
-    font-size: 18px;
-    font-weight: 700;
-    margin-top: 18px;
-    animation: fadeUp 0.6s ease;
-}}
-
-.stProgress > div > div > div > div {{
-    background: linear-gradient(90deg, #FFD700, #D4AF37) !important;
+    box-shadow: 0 0 28px rgba(212,175,55,0.42);
 }}
 
 .footer {{
@@ -429,16 +342,87 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     }}
 }}
 
-@keyframes glowPulse {{
-    0% {{
-        box-shadow: 0 0 10px rgba(212,175,55,0.10);
+/* =========================
+   دعم الجوال
+========================= */
+@media (max-width: 768px) {{
+
+    .block-container {{
+        padding-top: 0.7rem !important;
+        padding-bottom: 1rem !important;
+        padding-right: 0.7rem !important;
+        padding-left: 0.7rem !important;
+        max-width: 100% !important;
     }}
-    50% {{
-        box-shadow: 0 0 24px rgba(212,175,55,0.28);
+
+    .logo-wrap {{
+        margin-bottom: -6px !important;
     }}
-    100% {{
-        box-shadow: 0 0 10px rgba(212,175,55,0.10);
+
+    .logo-wrap img {{
+        width: 170px !important;
+        max-width: 88% !important;
     }}
+
+    .hero-box {{
+        padding: 18px 14px !important;
+        border-radius: 22px !important;
+        margin-bottom: 16px !important;
+    }}
+
+    .hero-title {{
+        font-size: 28px !important;
+        line-height: 1.3 !important;
+    }}
+
+    .hero-subtitle {{
+        font-size: 15px !important;
+    }}
+
+    .hero-text {{
+        font-size: 13px !important;
+        line-height: 1.9 !important;
+    }}
+
+    .match-title {{
+        font-size: 18px !important;
+        line-height: 1.5 !important;
+        margin: 8px 0 12px 0 !important;
+        word-break: break-word !important;
+    }}
+
+    .info-line {{
+        font-size: 13px !important;
+        line-height: 1.8 !important;
+        text-align: right !important;
+    }}
+
+    .note-box {{
+        font-size: 13px !important;
+        line-height: 1.8 !important;
+        padding: 12px !important;
+    }}
+
+    .status-pill {{
+        font-size: 12px !important;
+        padding: 7px 10px !important;
+    }}
+
+    .stButton > button {{
+        min-height: 52px !important;
+        font-size: 15px !important;
+        border-radius: 15px !important;
+        padding: 8px 10px !important;
+        white-space: normal !important;
+        line-height: 1.35 !important;
+    }}
+
+    .footer {{
+        font-size: 13px !important;
+        margin-top: 16px !important;
+    }}
+
+    
 }}
 </style>
 
@@ -462,326 +446,89 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     st.markdown("---")
-    st.markdown("### صفحة الحجز")
-    st.markdown("أدخل بيانات الحجز وسيتم احتساب السعر النهائي بشكل مباشر.")
+    st.markdown("### Match Details")
+    st.markdown("راجع تفاصيل المباريات قبل الانتقال إلى الحجز.")
 
 # =========================
 # الهيدر
 # =========================
 st.markdown("""
 <div class="hero-box">
-    <div class="hero-title">حجز التذاكر</div>
-    <div class="hero-subtitle">Smart Booking Experience</div>
+    <div class="hero-title">تفاصيل المباريات</div>
+    <div class="hero-subtitle">Match Details</div>
     <div class="hero-text">
-        أدخل بيانات الحجز وسيتم حساب السعر النهائي بشكل مباشر حسب المباراة، نوع المقعد،
-        عدد التذاكر، مستوى الطلب، وكود الخصم إن وجد.
+        قبل الحجز، يمكنك هنا الاطلاع على تفاصيل كل مباراة من حيث نوعها، البطولة،
+        الملعب، الحكم، وتوقيت المباراة، حتى تكون لديك صورة واضحة قبل إتمام الحجز.
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 # =========================
-# الخيارات
+# عرض المباريات
 # =========================
-match_options = list(pricing.keys())
-payment_methods = ["Apple Pay", "KNET", "Visa", "PayPal", "Samsung Pay"]
+col1, col2 = st.columns(2, gap="large")
 
-discount_codes = {
-    "KTECH10": 0.10,
-    "SMART15": 0.15,
-    "VIP20": 0.20
-}
+for i, match in enumerate(matches):
+    target_col = col1 if i % 2 == 0 else col2
 
-def calculate_price(match_name, seat_type, seat_section, ticket_count, demand_level, discount_code):
-    base_price = pricing[match_name]
-    seat_extra = seat_prices[seat_type]
-    section_extra = section_prices[seat_section]
-    demand_extra = demand_level * 1.5
-
-    subtotal_per_ticket = base_price + seat_extra + section_extra + demand_extra
-    subtotal = subtotal_per_ticket * ticket_count
-
-    discount_value = 0
-    if discount_code in discount_codes:
-        discount_value = subtotal * discount_codes[discount_code]
-
-    final_price = subtotal - discount_value
-    return base_price, round(final_price, 2), round(discount_value, 2), round(subtotal, 2)
-
-def make_qr_image(data_text: str):
-    qr = qrcode.QRCode(version=1, box_size=10, border=2)
-    qr.add_data(data_text)
-    qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
-    return img.convert("RGB")
-
-def create_ticket_pdf(booking_id, customer_name, phone, booking_date, match_name, seat_type,
-                      seat_section, ticket_count, payment_method, final_price):
-    buffer = BytesIO()
-    c = canvas.Canvas(buffer, pagesize=A4)
-    width, height = A4
-
-    c.setFont("Helvetica-Bold", 26)
-    c.drawString(60, height - 70, "SmartSeat Ticket")
-
-    c.setFont("Helvetica", 13)
-    c.drawString(60, height - 95, "Sponsored by Ktech")
-
-    c.roundRect(50, height - 430, 500, 300, 16, stroke=1, fill=0)
-
-    y = height - 160
-    gap = 28
-
-    details = [
-        f"Booking ID: {booking_id}",
-        f"Customer Name: {customer_name}",
-        f"Phone: {phone}",
-        f"Date: {booking_date}",
-        f"Match: {match_name}",
-        f"Seat Type: {seat_type}",
-        f"Section: {seat_section}",
-        f"Tickets: {ticket_count}",
-        f"Payment Method: {payment_method}",
-        f"Final Price: {final_price} KD",
-    ]
-
-    c.setFont("Helvetica", 12)
-    for line in details:
-        c.drawString(70, y, line)
-        y -= gap
-
-    qr_text = (
-        f"SmartSeat | ID:{booking_id} | {customer_name} | {match_name} | "
-        f"{seat_type} | Section:{seat_section} | Tickets:{ticket_count} | {final_price} KD"
-    )
-    qr_img = make_qr_image(qr_text)
-    qr_buffer = BytesIO()
-    qr_img.save(qr_buffer, format="PNG")
-    qr_buffer.seek(0)
-
-    c.drawImage(ImageReader(qr_buffer), 390, height - 395, width=120, height=120)
-
-    c.setFont("Helvetica-Oblique", 10)
-    c.drawString(60, 60, "Generated by SmartSeat Final Year Project")
-
-    c.showPage()
-    c.save()
-    buffer.seek(0)
-    return buffer
-
-# =========================
-# تحديد المباراة تلقائيًا
-# =========================
-default_index = 0
-if "selected_match" in st.session_state:
-    selected_match = st.session_state["selected_match"]
-    if selected_match in match_options:
-        default_index = match_options.index(selected_match)
-
-# =========================
-# بيانات الحجز
-# =========================
-with st.container(border=True):
-    st.markdown('<div class="section-title">بيانات الحجز</div>', unsafe_allow_html=True)
-    st.markdown("<hr>", unsafe_allow_html=True)
-
-    c1, c2 = st.columns(2)
-    with c1:
-        customer_name = st.text_input("اسم العميل")
-    with c2:
-        phone = st.text_input("رقم الهاتف")
-
-    c3, c4 = st.columns(2)
-    with c3:
-        booking_date = st.date_input("اختيار التاريخ", value=date.today(), min_value=date.today())
-    with c4:
-        ticket_count = st.number_input("عدد التذاكر", min_value=1, max_value=10, value=1, step=1)
-
-    c5, c6 = st.columns(2)
-    with c5:
-        match_name = st.selectbox("اختيار المباراة", match_options, index=default_index)
-    with c6:
-        seat_type = st.selectbox("نوع المقعد", list(seat_prices.keys()))
-
-    c7, c8 = st.columns(2)
-    with c7:
-        seat_section = st.selectbox("اختيار المقعد", list(section_prices.keys()))
-    with c8:
-        demand_level = st.slider("مستوى الطلب", min_value=1, max_value=10, value=5)
-
-    c9, c10 = st.columns(2)
-    with c9:
-        payment_method = st.selectbox("طريقة الدفع", payment_methods)
-    with c10:
-        discount_code = st.text_input("كود الخصم", placeholder="مثال: KTECH10")
-
-# =========================
-# حساب السعر
-# =========================
-base_price, final_price, discount_value, subtotal = calculate_price(
-    match_name,
-    seat_type,
-    seat_section,
-    ticket_count,
-    demand_level,
-    discount_code.strip().upper()
-)
-
-# =========================
-# ملخص الحجز
-# =========================
-with st.container(border=True):
-    st.markdown('<div class="section-title">ملخص الحجز</div>', unsafe_allow_html=True)
-    st.markdown("<hr>", unsafe_allow_html=True)
-
-    s1, s2 = st.columns(2)
-
-    with s1:
-        st.markdown(f'<div class="summary-line"><b>اسم العميل:</b> {customer_name if customer_name else "-"}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>رقم الهاتف:</b> {phone if phone else "-"}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>التاريخ:</b> {booking_date}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>المباراة:</b> {match_name}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>نوع المقعد:</b> {seat_type}</div>', unsafe_allow_html=True)
-
-    with s2:
-        st.markdown(f'<div class="summary-line"><b>المقعد / القسم:</b> {seat_section}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>عدد التذاكر:</b> {ticket_count}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>مستوى الطلب:</b> {demand_level}/10</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>طريقة الدفع:</b> {payment_method}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>كود الخصم:</b> {discount_code if discount_code else "لا يوجد"}</div>', unsafe_allow_html=True)
-
-    st.markdown(f"""
-    <div class="price-box">
-        <div class="price-label">السعر النهائي</div>
-        <div class="price-number">{final_price} د.ك</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown(
-        f'<div class="small-note">الإجمالي قبل الخصم: {subtotal} د.ك | قيمة الخصم: {discount_value} د.ك</div>',
-        unsafe_allow_html=True
-    )
-
-# =========================
-# التأكيد
-# =========================
-confirm = st.button("✅ تأكيد الحجز الآن")
-
-if confirm:
-    phone_clean = phone.strip()
-    discount_clean = discount_code.strip().upper()
-
-    if customer_name.strip() == "":
-        st.error("يرجى إدخال اسم العميل.")
-    elif phone_clean == "":
-        st.error("يرجى إدخال رقم الهاتف.")
-    else:
-        progress_text = st.markdown(
-            "<div class='gold-center' style='font-size:18px; margin-top:10px;'>جاري تأكيد الحجز وتجهيز التذكرة...</div>",
-            unsafe_allow_html=True
-        )
-        progress_bar = st.progress(0)
-
-        for i in range(1, 101):
-            time.sleep(0.01)
-            progress_bar.progress(i)
-
-        booking_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        cursor.execute("""
-            INSERT INTO bookings (
-                customer_name, phone, booking_date, match_name, seat_type,
-                seat_section, ticket_count, demand_level, payment_method,
-                discount_code, base_price, final_price, booking_time
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            customer_name,
-            phone_clean,
-            str(booking_date),
-            match_name,
-            seat_type,
-            seat_section,
-            ticket_count,
-            demand_level,
-            payment_method,
-            discount_clean,
-            base_price,
-            final_price,
-            booking_time
-        ))
-        conn.commit()
-
-        booking_id = cursor.lastrowid
-
-        pdf_buffer = create_ticket_pdf(
-            booking_id=booking_id,
-            customer_name=customer_name,
-            phone=phone_clean,
-            booking_date=str(booking_date),
-            match_name=match_name,
-            seat_type=seat_type,
-            seat_section=seat_section,
-            ticket_count=ticket_count,
-            payment_method=payment_method,
-            final_price=final_price
-        )
-
-        qr_text = f"{customer_name} | {match_name} | {seat_type} | {seat_section} | {final_price} KD | ID:{booking_id}"
-        qr_img = make_qr_image(qr_text)
-
-        qr_buffer = BytesIO()
-        qr_img.save(qr_buffer, format="PNG")
-        qr_bytes = qr_buffer.getvalue()
-
-        progress_bar.empty()
-        progress_text.empty()
-
-        st.markdown(f"""
-        <div class="success-box">
-            🎉 تم تأكيد الحجز بنجاح!<br><br>
-            👤 العميل: <b>{customer_name}</b><br>
-            🎟️ المباراة: <b>{match_name}</b><br>
-            💺 المقعد: <b>{seat_type} - {seat_section}</b><br>
-            💰 السعر النهائي: <b>{final_price} د.ك</b><br>
-            💳 الدفع: <b>{payment_method}</b>
-        </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown(
-            f"<div class='gold-center' style='font-size:22px; margin-top:10px;'>رقم الحجز: #{booking_id}</div>",
-            unsafe_allow_html=True
-        )
-
-        st.download_button(
-            label="📄 تحميل التذكرة PDF",
-            data=pdf_buffer,
-            file_name=f"SmartSeat_Ticket_{booking_id}.pdf",
-            mime="application/pdf"
-        )
-
+    with target_col:
         with st.container(border=True):
-            st.markdown('<div class="gold-center"><h3>🎟️ رمز التذكرة (QR Code)</h3></div>', unsafe_allow_html=True)
-            qr_col1, qr_col2, qr_col3 = st.columns([1, 1.2, 1])
-            with qr_col2:
-                st.image(qr_img, width=220)
-            st.markdown('<div class="gold-caption">اعرض هذا الرمز عند الدخول</div>', unsafe_allow_html=True)
+            if match["image"].exists():
+                st.image(str(match["image"]), use_container_width=True)
+            else:
+                st.warning(f"الصورة غير موجودة: {match['image'].name}")
 
-            st.download_button(
-                label="📥 تحميل QR كصورة",
-                data=qr_bytes,
-                file_name=f"SmartSeat_QR_{booking_id}.png",
-                mime="image/png"
+            st.markdown(
+                f'<div class="match-title">{match["name"]}</div>',
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f'<div class="info-line"><span class="info-label">نوع المباراة:</span> {match["type"]}</div>',
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f'<div class="info-line"><span class="info-label">البطولة:</span> {match["competition"]}</div>',
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f'<div class="info-line"><span class="info-label">الملعب:</span> {match["stadium"]}</div>',
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f'<div class="info-line"><span class="info-label">المدينة:</span> {match["city"]}</div>',
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f'<div class="info-line"><span class="info-label">الحكم:</span> {match["referee"]}</div>',
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f'<div class="info-line"><span class="info-label">التاريخ والوقت:</span> {match["datetime"]}</div>',
+                unsafe_allow_html=True
             )
 
-        st.session_state.pop("selected_match", None)
+            st.markdown(f"""
+            <div class="status-row">
+                <div class="status-pill">فتح البوابات: {match["gates_open"]}</div>
+                <div class="status-pill">{match["demand"]}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            st.markdown(f"""
+            <div class="note-box">
+                {match["note"]}<br><br>{match["parking"]}
+            </div>
+            """, unsafe_allow_html=True)
+
+            if st.button(f"🎟️ احجز الآن - {match['name']}", key=f"book_{i}"):
+                st.session_state["selected_match"] = match["name"]
+                st.switch_page("pages/1_Booking.py")
 
 # =========================
 # الفوتر
 # =========================
 st.markdown("""
 <div class="footer">
-    SmartSeat Booking • Final Year Project
+    SmartSeat Match Details • Final Year Project
 </div>
 """, unsafe_allow_html=True)
-
-conn.close()
