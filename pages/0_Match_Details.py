@@ -74,7 +74,7 @@ matches = [
         "image": assets_dir / "match4.png",
         "name": "مانشستر سيتي × ليفربول",
         "type": "نهائي كأس الاتحاد الانجليزي",
-        "competition": "International Friendly",
+        "competition": "FA Cup Final",
         "stadium": "ويمبلي",
         "city": "لندن",
         "referee": "Anthony Taylor",
