@@ -422,9 +422,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
         margin-top: 16px !important;
     }}
 
-    section[data-testid="stSidebar"] {{
-        display: none !important;
-    }}
+    
 }}
 </style>
 
