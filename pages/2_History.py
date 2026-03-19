@@ -58,6 +58,7 @@ html, body, [class*="css"] {{
     color: white;
 }}
 
+/* سايدبار الكمبيوتر */
 section[data-testid="stSidebar"] {{
     background: linear-gradient(180deg, #0b0b0b 0%, #151515 100%);
     border-left: 1px solid rgba(212,175,55,0.20);
@@ -134,7 +135,6 @@ section[data-testid="stSidebar"] {{
     align-items: center;
     margin-top: -5px;
     margin-bottom: -16px;
-    animation: fadeUp 0.7s ease;
 }}
 
 .logo-wrap img {{
@@ -152,7 +152,6 @@ section[data-testid="stSidebar"] {{
     box-shadow: 0 12px 30px rgba(0,0,0,0.42);
     margin-top: 0px;
     margin-bottom: 22px;
-    animation: fadeUp 0.8s ease;
 }}
 
 .hero-title {{
@@ -192,7 +191,6 @@ section[data-testid="stSidebar"] {{
     padding: 18px;
     text-align: center;
     box-shadow: 0 0 18px rgba(212,175,55,0.12);
-    animation: fadeUp 0.9s ease;
     transition: all 0.25s ease;
 }}
 
@@ -210,6 +208,49 @@ section[data-testid="stSidebar"] {{
 .metric-label {{
     color: #E6C86E;
     font-size: 16px;
+}}
+
+.mobile-nav-only {{
+    display: none;
+}}
+
+.mobile-nav-box {{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 22px;
+    padding: 14px 12px 6px 12px;
+    margin-bottom: 16px;
+}}
+
+.mobile-nav-title {{
+    color: #D4AF37;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}}
+
+.mobile-links {{
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}}
+
+.mobile-links a {{
+    text-decoration: none !important;
+    color: black !important;
+    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 800;
+    display: inline-block;
+    box-shadow: 0 0 14px rgba(212,175,55,0.20);
+}}
+
+.mobile-links a:hover {{
+    transform: translateY(-2px);
 }}
 
 label {{
@@ -246,7 +287,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     border: 1px solid rgba(212,175,55,0.25) !important;
     border-radius: 24px !important;
     box-shadow: 0 8px 20px rgba(0,0,0,0.28);
-    animation: fadeUp 1s ease;
+    overflow: hidden !important;
 }}
 
 .warning-box {{
@@ -276,14 +317,88 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     opacity: 0.95;
 }}
 
-@keyframes fadeUp {{
-    from {{
-        opacity: 0;
-        transform: translateY(14px);
+/* الجوال فقط */
+@media (max-width: 768px) {{
+    section[data-testid="stSidebar"] {{
+        display: none !important;
     }}
-    to {{
-        opacity: 1;
-        transform: translateY(0);
+
+    [data-testid="stSidebarCollapsedControl"] {{
+        display: none !important;
+    }}
+
+    button[kind="header"] {{
+        display: none !important;
+    }}
+
+    .mobile-nav-only {{
+        display: block !important;
+    }}
+
+    .block-container {{
+        padding-top: 0.7rem !important;
+        padding-bottom: 1rem !important;
+        padding-right: 0.7rem !important;
+        padding-left: 0.7rem !important;
+        max-width: 100% !important;
+    }}
+
+    .logo-wrap {{
+        margin-top: 0 !important;
+        margin-bottom: -6px !important;
+    }}
+
+    .logo-wrap img {{
+        width: 170px !important;
+        max-width: 88% !important;
+    }}
+
+    .hero-box {{
+        padding: 18px 14px !important;
+        border-radius: 22px !important;
+        margin-bottom: 16px !important;
+    }}
+
+    .hero-title {{
+        font-size: 28px !important;
+        line-height: 1.3 !important;
+    }}
+
+    .hero-subtitle {{
+        font-size: 15px !important;
+    }}
+
+    .hero-text {{
+        font-size: 13px !important;
+        line-height: 1.9 !important;
+    }}
+
+    .section-title {{
+        font-size: 22px !important;
+        margin-bottom: 8px !important;
+    }}
+
+    .metric-number {{
+        font-size: 24px !important;
+    }}
+
+    .metric-label {{
+        font-size: 13px !important;
+    }}
+
+    .gold-note {{
+        font-size: 13px !important;
+        line-height: 1.8 !important;
+    }}
+
+    .warning-box {{
+        font-size: 14px !important;
+        line-height: 1.8 !important;
+    }}
+
+    .footer {{
+        font-size: 13px !important;
+        margin-top: 16px !important;
     }}
 }}
 </style>
@@ -320,7 +435,7 @@ CREATE TABLE IF NOT EXISTS bookings (
 conn.commit()
 
 # =========================
-# السايدبار
+# سايدبار الكمبيوتر
 # =========================
 with st.sidebar:
     st.markdown(f"""
@@ -338,6 +453,22 @@ with st.sidebar:
     st.markdown("راجع جميع الحجوزات، وابحث أو فلتر حسب البيانات المطلوبة.")
     st.markdown("### ملاحظة")
     st.markdown("الحذف متاح فقط من لوحة الإدارة.")
+
+# =========================
+# تنقل الجوال فقط
+# =========================
+st.markdown("""
+<div class="mobile-nav-only">
+    <div class="mobile-nav-box">
+        <div class="mobile-nav-title">التنقل السريع</div>
+        <div class="mobile-links">
+            <a href="/">الرئيسية</a>
+            <a href="/Booking">الحجز</a>
+            <a href="/Analytics">التحليلات</a>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # =========================
 # الهيدر
@@ -452,7 +583,7 @@ with st.container(border=True):
         st.markdown('<div class="warning-box">لا توجد حجوزات مطابقة للبحث أو الفلاتر الحالية.</div>', unsafe_allow_html=True)
     else:
         display_df = filtered_df.copy()
-        display_df = display_df.rename(columns={
+        display_df = display_df.rename(columns={{
             "id": "رقم الحجز",
             "customer_name": "اسم العميل",
             "phone": "رقم الهاتف",
@@ -467,7 +598,7 @@ with st.container(border=True):
             "base_price": "السعر الأساسي",
             "final_price": "السعر النهائي",
             "booking_time": "وقت الحجز"
-        })
+        }})
         st.dataframe(display_df, use_container_width=True)
 
 # =========================
