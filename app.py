@@ -416,21 +416,27 @@ section[data-testid="stSidebar"] {{
     margin: auto;
 }}
 
-.quick-box {{
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(212,175,55,0.25);
+.welcome-box {{
+    background: linear-gradient(135deg, rgba(25,25,25,0.95), rgba(40,40,40,0.92));
+    border: 1px solid rgba(212,175,55,0.32);
     border-radius: 24px;
-    padding: 18px;
+    padding: 18px 24px;
+    text-align: center;
     box-shadow: 0 8px 20px rgba(0,0,0,0.28);
     margin-bottom: 18px;
 }}
 
-.quick-title {{
+.welcome-box-title {{
     color: #D4AF37;
-    text-align: center;
-    font-size: 18px;
-    font-weight: 800;
-    margin-bottom: 12px;
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 8px;
+}}
+
+.welcome-box-text {{
+    color: #F0D98A;
+    font-size: 16px;
+    line-height: 1.9;
 }}
 
 .card {{
@@ -473,29 +479,6 @@ section[data-testid="stSidebar"] {{
     text-align: center;
 }}
 
-.welcome-box {{
-    background: linear-gradient(135deg, rgba(25,25,25,0.95), rgba(40,40,40,0.92));
-    border: 1px solid rgba(212,175,55,0.32);
-    border-radius: 24px;
-    padding: 18px 24px;
-    text-align: center;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.28);
-    margin-bottom: 18px;
-}}
-
-.welcome-box-title {{
-    color: #D4AF37;
-    font-size: 24px;
-    font-weight: 900;
-    margin-bottom: 8px;
-}}
-
-.welcome-box-text {{
-    color: #F0D98A;
-    font-size: 16px;
-    line-height: 1.9;
-}}
-
 .desktop-quick-wrap {{
     display: block;
 }}
@@ -536,6 +519,46 @@ section[data-testid="stSidebar"] {{
     display: inline-block;
     text-align: center;
     min-width: 120px;
+}}
+
+.quick-box {{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+    margin-bottom: 18px;
+}}
+
+.quick-title {{
+    color: #D4AF37;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}}
+
+.mobile-bottom-quick {{
+    display: none;
+}}
+
+.mobile-bottom-links {{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}}
+
+.mobile-bottom-links a {{
+    text-decoration: none !important;
+    color: black !important;
+    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
+    padding: 16px 12px;
+    border-radius: 18px;
+    font-size: 18px;
+    font-weight: 800;
+    text-align: center;
+    display: block;
+    box-shadow: 0 0 18px rgba(212,175,55,0.22);
 }}
 
 label {{
@@ -658,6 +681,9 @@ input {{
         display: none !important;
     }}
     .mobile-only {{
+        display: block !important;
+    }}
+    .mobile-bottom-quick {{
         display: block !important;
     }}
 }}
@@ -919,48 +945,21 @@ else:
 
     # الوصول السريع - هاتف فقط - آخر الصفحة - 3 سطور
     st.markdown(f"""
-    <div class="mobile-only">
+    <div class="mobile-bottom-quick">
         <div class="quick-box">
             <div class="quick-title">{t('quick_access')}</div>
         </div>
+
+        <div class="mobile-bottom-links">
+            <a href="/Match_Details">{t('go_matches')}</a>
+            <a href="/Booking">{t('go_booking')}</a>
+            <a href="/History">{t('go_history')}</a>
+            <a href="/Analytics">{t('go_analytics')}</a>
+            <a href="/Admin">{t('go_admin')}</a>
+            <a href="/Support">{t('go_support')}</a>
+        </div>
     </div>
     """, unsafe_allow_html=True)
-
-    r1c1, r1c2 = st.columns(2)
-    with r1c1:
-        st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
-        if st.button(t("go_matches"), key="m_go_matches"):
-            st.switch_page("pages/0_Match_Details.py")
-        st.markdown('</div>', unsafe_allow_html=True)
-    with r1c2:
-        st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
-        if st.button(t("go_booking"), key="m_go_booking"):
-            st.switch_page("pages/1_Booking.py")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    r2c1, r2c2 = st.columns(2)
-    with r2c1:
-        st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
-        if st.button(t("go_history"), key="m_go_history"):
-            st.switch_page("pages/2_History.py")
-        st.markdown('</div>', unsafe_allow_html=True)
-    with r2c2:
-        st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
-        if st.button(t("go_analytics"), key="m_go_analytics"):
-            st.switch_page("pages/3_Analytics.py")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    r3c1, r3c2 = st.columns(2)
-    with r3c1:
-        st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
-        if st.button(t("go_admin"), key="m_go_admin"):
-            st.switch_page("pages/4_Admin.py")
-        st.markdown('</div>', unsafe_allow_html=True)
-    with r3c2:
-        st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
-        if st.button(t("go_support"), key="m_go_support"):
-            st.switch_page("pages/5_Support.py")
-        st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown(f'<div class="footer">{t("footer")}</div>', unsafe_allow_html=True)
 conn.close()
