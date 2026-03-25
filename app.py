@@ -496,6 +496,48 @@ section[data-testid="stSidebar"] {{
     line-height: 1.9;
 }}
 
+.desktop-quick-wrap {{
+    display: block;
+}}
+
+.desktop-quick-box {{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+    margin-bottom: 18px;
+}}
+
+.desktop-quick-title {{
+    color: #D4AF37;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 14px;
+}}
+
+.desktop-quick-links {{
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: nowrap;
+}}
+
+.desktop-quick-links a {{
+    text-decoration: none !important;
+    color: black !important;
+    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 800;
+    box-shadow: 0 0 18px rgba(212,175,55,0.22);
+    display: inline-block;
+    text-align: center;
+    min-width: 120px;
+}}
+
 label {{
     color: #E6C86E !important;
     font-weight: 700 !important;
@@ -610,6 +652,9 @@ input {{
         font-size: 20px !important;
     }}
     .desktop-only {{
+        display: none !important;
+    }}
+    .desktop-quick-wrap {{
         display: none !important;
     }}
     .mobile-only {{
@@ -767,44 +812,20 @@ else:
 
     # الوصول السريع - كمبيوتر فقط
     st.markdown(f"""
-    <div class="desktop-only">
-        <div class="quick-box">
-            <div class="quick-title">{t('quick_access')}</div>
+    <div class="desktop-quick-wrap">
+        <div class="desktop-quick-box">
+            <div class="desktop-quick-title">{t('quick_access')}</div>
+            <div class="desktop-quick-links">
+                <a href="/Match_Details">{t('go_matches')}</a>
+                <a href="/Booking">{t('go_booking')}</a>
+                <a href="/History">{t('go_history')}</a>
+                <a href="/Analytics">{t('go_analytics')}</a>
+                <a href="/Admin">{t('go_admin')}</a>
+                <a href="/Support">{t('go_support')}</a>
+            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
-
-    c1, c2, c3, c4, c5, c6 = st.columns(6)
-    with c1:
-        st.markdown('<div class="desktop-only">', unsafe_allow_html=True)
-        if st.button(t("go_matches"), key="go_matches_btn"):
-            st.switch_page("pages/0_Match_Details.py")
-        st.markdown('</div>', unsafe_allow_html=True)
-    with c2:
-        st.markdown('<div class="desktop-only">', unsafe_allow_html=True)
-        if st.button(t("go_booking"), key="go_booking_btn"):
-            st.switch_page("pages/1_Booking.py")
-        st.markdown('</div>', unsafe_allow_html=True)
-    with c3:
-        st.markdown('<div class="desktop-only">', unsafe_allow_html=True)
-        if st.button(t("go_history"), key="go_history_btn"):
-            st.switch_page("pages/2_History.py")
-        st.markdown('</div>', unsafe_allow_html=True)
-    with c4:
-        st.markdown('<div class="desktop-only">', unsafe_allow_html=True)
-        if st.button(t("go_analytics"), key="go_analytics_btn"):
-            st.switch_page("pages/3_Analytics.py")
-        st.markdown('</div>', unsafe_allow_html=True)
-    with c5:
-        st.markdown('<div class="desktop-only">', unsafe_allow_html=True)
-        if st.button(t("go_admin"), key="go_admin_btn"):
-            st.switch_page("pages/4_Admin.py")
-        st.markdown('</div>', unsafe_allow_html=True)
-    with c6:
-        st.markdown('<div class="desktop-only">', unsafe_allow_html=True)
-        if st.button(t("go_support"), key="go_support_btn"):
-            st.switch_page("pages/5_Support.py")
-        st.markdown('</div>', unsafe_allow_html=True)
 
     st.write("")
 
@@ -896,7 +917,7 @@ else:
 
     st.write("")
 
-    # الوصول السريع - هاتف فقط - آخر الصفحة
+    # الوصول السريع - هاتف فقط - آخر الصفحة - 3 سطور
     st.markdown(f"""
     <div class="mobile-only">
         <div class="quick-box">
@@ -905,23 +926,38 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    m1, m2 = st.columns(2)
-    with m1:
+    r1c1, r1c2 = st.columns(2)
+    with r1c1:
         st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
         if st.button(t("go_matches"), key="m_go_matches"):
             st.switch_page("pages/0_Match_Details.py")
-        if st.button(t("go_history"), key="m_go_history"):
-            st.switch_page("pages/2_History.py")
-        if st.button(t("go_admin"), key="m_go_admin"):
-            st.switch_page("pages/4_Admin.py")
         st.markdown('</div>', unsafe_allow_html=True)
-
-    with m2:
+    with r1c2:
         st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
         if st.button(t("go_booking"), key="m_go_booking"):
             st.switch_page("pages/1_Booking.py")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    r2c1, r2c2 = st.columns(2)
+    with r2c1:
+        st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
+        if st.button(t("go_history"), key="m_go_history"):
+            st.switch_page("pages/2_History.py")
+        st.markdown('</div>', unsafe_allow_html=True)
+    with r2c2:
+        st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
         if st.button(t("go_analytics"), key="m_go_analytics"):
             st.switch_page("pages/3_Analytics.py")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    r3c1, r3c2 = st.columns(2)
+    with r3c1:
+        st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
+        if st.button(t("go_admin"), key="m_go_admin"):
+            st.switch_page("pages/4_Admin.py")
+        st.markdown('</div>', unsafe_allow_html=True)
+    with r3c2:
+        st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
         if st.button(t("go_support"), key="m_go_support"):
             st.switch_page("pages/5_Support.py")
         st.markdown('</div>', unsafe_allow_html=True)
