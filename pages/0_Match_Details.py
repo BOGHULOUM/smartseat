@@ -1,5 +1,6 @@
 import streamlit as st
 from pathlib import Path
+import sqlite3
 import base64
 
 # =========================
@@ -8,6 +9,7 @@ import base64
 base_dir = Path(__file__).parent.parent
 assets_dir = base_dir / "assets"
 logo_path = assets_dir / "logo.png"
+db_path = base_dir / "tickets.db"
 
 st.set_page_config(
     page_title="SmartSeat - Match Details",
@@ -16,7 +18,92 @@ st.set_page_config(
 )
 
 # =========================
-# تحويل اللوقو إلى base64
+# قاعدة البيانات
+# =========================
+conn = sqlite3.connect(db_path, check_same_thread=False)
+cursor = conn.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    full_name TEXT NOT NULL,
+    username TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL
+)
+""")
+conn.commit()
+
+# =========================
+# Session State
+# =========================
+if "lang" not in st.session_state:
+    st.session_state.lang = "ar"
+
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if "user_name" not in st.session_state:
+    st.session_state.user_name = ""
+
+# =========================
+# الترجمة
+# =========================
+TXT = {
+    "ar": {
+        "lang_label": "اللغة",
+        "arabic": "العربية",
+        "english": "English",
+        "title": "تفاصيل المباريات",
+        "subtitle": "Match Details",
+        "desc": "قبل الحجز، يمكنك هنا الاطلاع على تفاصيل كل مباراة من حيث نوعها، البطولة، الملعب، الحكم، وتوقيت المباراة، حتى تكون لديك صورة واضحة قبل إتمام الحجز.",
+        "match_type": "نوع المباراة",
+        "competition": "البطولة",
+        "stadium": "الملعب",
+        "city": "المدينة",
+        "referee": "الحكم",
+        "datetime": "التاريخ والوقت",
+        "gates": "فتح البوابات",
+        "book_now": "احجز الآن",
+        "need_login": "يجب تسجيل الدخول أولاً للوصول إلى هذه الصفحة.",
+        "back_home": "العودة للرئيسية",
+        "quick_access": "التنقل السريع",
+        "home": "الرئيسية",
+        "booking": "الحجز",
+        "support": "الدعم",
+        "footer": "SmartSeat Match Details • Final Year Project",
+    },
+    "en": {
+        "lang_label": "Language",
+        "arabic": "العربية",
+        "english": "English",
+        "title": "Match Details",
+        "subtitle": "Match Details",
+        "desc": "Before booking, you can review each match details including type, competition, stadium, referee, and date/time.",
+        "match_type": "Match Type",
+        "competition": "Competition",
+        "stadium": "Stadium",
+        "city": "City",
+        "referee": "Referee",
+        "datetime": "Date & Time",
+        "gates": "Gates Open",
+        "book_now": "Book Now",
+        "need_login": "You must login first to access this page.",
+        "back_home": "Back to Home",
+        "quick_access": "Quick Access",
+        "home": "Home",
+        "booking": "Booking",
+        "support": "Support",
+        "footer": "SmartSeat Match Details • Final Year Project",
+    }
+}
+
+def t(k):
+    return TXT[st.session_state.lang][k]
+
+# =========================
+# أدوات
 # =========================
 def get_base64(img_path):
     with open(img_path, "rb") as f:
@@ -25,64 +112,109 @@ def get_base64(img_path):
 logo_base64 = get_base64(logo_path)
 
 # =========================
+# حماية الصفحة
+# =========================
+if not st.session_state.logged_in:
+    st.warning(t("need_login"))
+    if st.button(t("back_home")):
+        st.switch_page("app.py")
+    st.stop()
+
+# =========================
 # بيانات المباريات
 # =========================
 matches = [
     {
         "image": assets_dir / "match1.png",
-        "name": "برشلونة × ريال مدريد",
-        "type": "نهائي كأس",
-        "competition": "كأس السوبر الإسباني",
-        "stadium": "ملعب الملك فهد الدولي",
-        "city": "الرياض",
-        "referee": "Michael Oliver",
+        "name_ar": "برشلونة × ريال مدريد",
+        "name_en": "Barcelona vs Real Madrid",
+        "type_ar": "نهائي كأس",
+        "type_en": "Cup Final",
+        "competition_ar": "كأس السوبر الإسباني",
+        "competition_en": "Spanish Super Cup",
+        "stadium_ar": "ملعب الملك فهد الدولي",
+        "stadium_en": "King Fahd International Stadium",
+        "city_ar": "الرياض",
+        "city_en": "Riyadh",
+        "referee_ar": "Michael Oliver",
+        "referee_en": "Michael Oliver",
         "datetime": "18-05-2026 • 20:30",
         "gates_open": "18:30",
-        "parking": "مواقف VIP ومواقف عامة متوفرة",
-        "demand": "الطلب مرتفع جداً",
-        "note": "مواجهة كلاسيكية نارية بين عملاقين من أكبر أندية العالم."
+        "parking_ar": "مواقف VIP ومواقف عامة متوفرة",
+        "parking_en": "VIP and public parking are available",
+        "demand_ar": "الطلب مرتفع جداً",
+        "demand_en": "Very high demand",
+        "note_ar": "مواجهة كلاسيكية نارية بين عملاقين من أكبر أندية العالم.",
+        "note_en": "A fiery Clasico between two of the world's biggest clubs."
     },
     {
         "image": assets_dir / "match2.png",
-        "name": "الكويت × القادسية",
-        "type": "دوري",
-        "competition": "الدوري الكويتي الممتاز",
-        "stadium": "ملعب جابر الأحمد الدولي",
-        "city": "الكويت",
-        "referee": "عبدالرحمن الجاسم",
+        "name_ar": "الكويت × القادسية",
+        "name_en": "Kuwait vs Qadsia",
+        "type_ar": "دوري",
+        "type_en": "League",
+        "competition_ar": "الدوري الكويتي الممتاز",
+        "competition_en": "Kuwaiti Premier League",
+        "stadium_ar": "ملعب جابر الأحمد الدولي",
+        "stadium_en": "Jaber Al-Ahmad International Stadium",
+        "city_ar": "الكويت",
+        "city_en": "Kuwait",
+        "referee_ar": "عبدالرحمن الجاسم",
+        "referee_en": "Abdulrahman Al-Jassim",
         "datetime": "22-05-2026 • 19:45",
         "gates_open": "17:45",
-        "parking": "مواقف الجماهير متوفرة بالقرب من الملعب",
-        "demand": "الطلب مرتفع",
-        "note": "ديربي كويتي جماهيري متوقع له حضور قوي وأجواء حماسية كبيرة."
+        "parking_ar": "مواقف الجماهير متوفرة بالقرب من الملعب",
+        "parking_en": "Fan parking is available near the stadium",
+        "demand_ar": "الطلب مرتفع",
+        "demand_en": "High demand",
+        "note_ar": "ديربي كويتي جماهيري متوقع له حضور قوي وأجواء حماسية كبيرة.",
+        "note_en": "A major Kuwaiti derby expected to attract strong attendance and exciting atmosphere."
     },
     {
         "image": assets_dir / "match3.png",
-        "name": "العربي × السالمية",
-        "type": "كأس",
-        "competition": "كأس الأمير",
-        "stadium": "ملعب صباح السالم",
-        "city": "الكويت",
-        "referee": "أحمد العلي",
+        "name_ar": "العربي × السالمية",
+        "name_en": "Al Arabi vs Al Salmiya",
+        "type_ar": "كأس",
+        "type_en": "Cup",
+        "competition_ar": "كأس الأمير",
+        "competition_en": "Amir Cup",
+        "stadium_ar": "ملعب صباح السالم",
+        "stadium_en": "Sabah Al-Salem Stadium",
+        "city_ar": "الكويت",
+        "city_en": "Kuwait",
+        "referee_ar": "أحمد العلي",
+        "referee_en": "Ahmed Al-Ali",
         "datetime": "25-05-2026 • 18:30",
         "gates_open": "16:30",
-        "parking": "تتوفر مواقف خارجية حول الاستاد",
-        "demand": "الطلب متوسط إلى مرتفع",
-        "note": "مواجهة مهمة في بطولة الكأس وفرص التأهل فيها كبيرة للطرفين."
+        "parking_ar": "تتوفر مواقف خارجية حول الاستاد",
+        "parking_en": "Outdoor parking is available around the stadium",
+        "demand_ar": "الطلب متوسط إلى مرتفع",
+        "demand_en": "Medium to high demand",
+        "note_ar": "مواجهة مهمة في بطولة الكأس وفرص التأهل فيها كبيرة للطرفين.",
+        "note_en": "An important cup match with strong qualification chances for both teams."
     },
     {
         "image": assets_dir / "match4.png",
-        "name": "مانشستر سيتي × ليفربول",
-        "type": "نهائي كأس الاتحاد الانجليزي",
-        "competition": "FA Cup Final",
-        "stadium": "ويمبلي",
-        "city": "لندن",
-        "referee": "Anthony Taylor",
+        "name_ar": "مانشستر سيتي × ليفربول",
+        "name_en": "Manchester City vs Liverpool",
+        "type_ar": "ودية",
+        "type_en": "Friendly",
+        "competition_ar": "International Friendly",
+        "competition_en": "International Friendly",
+        "stadium_ar": "ويمبلي",
+        "stadium_en": "Wembley",
+        "city_ar": "لندن",
+        "city_en": "London",
+        "referee_ar": "Anthony Taylor",
+        "referee_en": "Anthony Taylor",
         "datetime": "30-05-2026 • 21:00",
         "gates_open": "19:00",
-        "parking": "المواقف محدودة ويُنصح بالحضور المبكر",
-        "demand": "الطلب مرتفع جداً",
-        "note": "قمة إنجليزية ممتعة بين فريقين كبيرين في مواجهة استعراضية قوية."
+        "parking_ar": "المواقف محدودة ويُنصح بالحضور المبكر",
+        "parking_en": "Parking is limited and early arrival is recommended",
+        "demand_ar": "الطلب مرتفع جداً",
+        "demand_en": "Very high demand",
+        "note_ar": "قمة إنجليزية ممتعة بين فريقين كبيرين في مواجهة استعراضية قوية.",
+        "note_en": "An exciting English clash between two major teams in a strong showcase match."
     }
 ]
 
@@ -118,7 +250,6 @@ html, body, [class*="css"] {{
     color: white;
 }}
 
-/* سايدبار الكمبيوتر */
 section[data-testid="stSidebar"] {{
     background: linear-gradient(180deg, #0b0b0b 0%, #151515 100%);
     border-left: 1px solid rgba(212,175,55,0.20);
@@ -128,20 +259,8 @@ section[data-testid="stSidebar"] {{
     background:
         radial-gradient(circle at 20% 25%, rgba(0,0,0,0.08), transparent 28%),
         radial-gradient(circle at 80% 75%, rgba(0,0,0,0.06), transparent 30%),
-        repeating-linear-gradient(
-            135deg,
-            rgba(0,0,0,0.07) 0px,
-            rgba(0,0,0,0.07) 2px,
-            transparent 2px,
-            transparent 26px
-        ),
-        repeating-linear-gradient(
-            -135deg,
-            rgba(0,0,0,0.045) 0px,
-            rgba(0,0,0,0.045) 2px,
-            transparent 2px,
-            transparent 34px
-        ),
+        repeating-linear-gradient(135deg, rgba(0,0,0,0.07) 0px, rgba(0,0,0,0.07) 2px, transparent 2px, transparent 26px),
+        repeating-linear-gradient(-135deg, rgba(0,0,0,0.045) 0px, rgba(0,0,0,0.045) 2px, transparent 2px, transparent 34px),
         linear-gradient(135deg, #f4d46a 0%, #d4af37 55%, #b78d1d 100%);
     border: 1px solid rgba(255,255,255,0.18);
     border-radius: 24px;
@@ -151,36 +270,23 @@ section[data-testid="stSidebar"] {{
     margin-bottom: 10px;
 }}
 
-.sidebar-logo-wrap {{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 12px;
-}}
-
 .sidebar-logo {{
     width: 120px;
     max-width: 100%;
     display: block;
-    margin: 0 auto;
-    filter: drop-shadow(0px 4px 10px rgba(0,0,0,0.20));
+    margin: 0 auto 12px auto;
 }}
 
 .sidebar-brand-title {{
     color: #111111;
     font-size: 30px;
     font-weight: 900;
-    text-align: center;
-    margin-bottom: 6px;
-    line-height: 1.1;
 }}
 
 .sidebar-brand-subtitle {{
     color: #181818;
     font-size: 14px;
     font-weight: 700;
-    text-align: center;
-    line-height: 1.7;
 }}
 
 .block-container {{
@@ -220,14 +326,12 @@ section[data-testid="stSidebar"] {{
     font-size: 42px;
     font-weight: 900;
     color: #D4AF37;
-    margin-bottom: 4px;
 }}
 
 .hero-subtitle {{
     font-size: 18px;
     color: #E6C86E;
     font-weight: 700;
-    margin-bottom: 8px;
 }}
 
 .hero-text {{
@@ -302,8 +406,25 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     font-weight: 700;
 }}
 
+label {{
+    color: #E6C86E !important;
+    font-weight: 700 !important;
+}}
+
+.stButton > button {{
+    width: 100%;
+    min-height: 60px;
+    border: none;
+    border-radius: 18px;
+    padding: 12px 18px;
+    font-size: 18px;
+    font-weight: 800;
+    color: black;
+    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
+}}
+
 .mobile-nav-only {{
-    display: none;
+    display:none;
 }}
 
 .mobile-nav-box {{
@@ -323,74 +444,43 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 }}
 
 .mobile-links {{
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    flex-wrap:wrap;
 }}
 
 .mobile-links a {{
-    text-decoration: none !important;
-    color: black !important;
+    text-decoration:none !important;
+    color:black !important;
     background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
-    padding: 10px 14px;
-    border-radius: 14px;
-    font-size: 14px;
-    font-weight: 800;
-    display: inline-block;
-    box-shadow: 0 0 14px rgba(212,175,55,0.20);
-}}
-
-.mobile-links a:hover {{
-    transform: translateY(-2px);
-}}
-
-.stButton > button {{
-    width: 100%;
-    min-height: 60px;
-    border: none;
-    border-radius: 18px;
-    padding: 12px 18px;
-    font-size: 18px;
-    font-weight: 800;
-    color: black;
-    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
-    box-shadow: 0 0 18px rgba(212,175,55,0.22);
-    transition: all 0.25s ease;
-}}
-
-.stButton > button:hover {{
-    transform: translateY(-2px) scale(1.01);
-    box-shadow: 0 0 24px rgba(212,175,55,0.36);
+    padding:10px 14px;
+    border-radius:14px;
+    font-size:14px;
+    font-weight:800;
 }}
 
 .footer {{
-    text-align: center;
-    color: #D4AF37;
-    font-size: 15px;
-    font-weight: 600;
-    margin-top: 24px;
-    opacity: 0.95;
+    text-align:center;
+    color:#D4AF37;
+    font-size:15px;
+    font-weight:600;
+    margin-top:24px;
 }}
 
-/* الجوال فقط */
 @media (max-width: 768px) {{
     section[data-testid="stSidebar"] {{
         display: none !important;
     }}
-
     [data-testid="stSidebarCollapsedControl"] {{
         display: none !important;
     }}
-
     button[kind="header"] {{
         display: none !important;
     }}
-
     .mobile-nav-only {{
-        display: block !important;
+        display:block !important;
     }}
-
     .block-container {{
         padding-top: 0.7rem !important;
         padding-bottom: 1rem !important;
@@ -398,71 +488,27 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
         padding-left: 0.7rem !important;
         max-width: 100% !important;
     }}
-
-    .logo-wrap {{
-        margin-bottom: -4px !important;
-    }}
-
     .logo-wrap img {{
         width: 165px !important;
         max-width: 86% !important;
     }}
-
     .hero-box {{
         padding: 18px 14px !important;
         border-radius: 22px !important;
         margin-bottom: 16px !important;
     }}
-
     .hero-title {{
         font-size: 28px !important;
-        line-height: 1.3 !important;
     }}
-
     .hero-subtitle {{
         font-size: 15px !important;
     }}
-
-    .hero-text {{
+    .hero-text, .info-line, .note-box {{
         font-size: 13px !important;
         line-height: 1.9 !important;
     }}
-
     .match-title {{
         font-size: 18px !important;
-        line-height: 1.5 !important;
-        margin: 8px 0 12px 0 !important;
-    }}
-
-    .info-line {{
-        font-size: 13px !important;
-        line-height: 1.8 !important;
-        text-align: right !important;
-    }}
-
-    .note-box {{
-        font-size: 13px !important;
-        line-height: 1.8 !important;
-        padding: 12px !important;
-    }}
-
-    .status-pill {{
-        font-size: 12px !important;
-        padding: 7px 10px !important;
-    }}
-
-    .stButton > button {{
-        min-height: 52px !important;
-        font-size: 15px !important;
-        border-radius: 15px !important;
-        padding: 8px 10px !important;
-        white-space: normal !important;
-        line-height: 1.35 !important;
-    }}
-
-    .footer {{
-        font-size: 13px !important;
-        margin-top: 16px !important;
     }}
 }}
 </style>
@@ -473,49 +519,62 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 """, unsafe_allow_html=True)
 
 # =========================
-# سايدبار الكمبيوتر
+# السايدبار
 # =========================
 with st.sidebar:
     st.markdown(f"""
     <div class="sidebar-brand-card">
-        <div class="sidebar-logo-wrap">
-            <img src="data:image/png;base64,{logo_base64}" class="sidebar-logo">
-        </div>
+        <img src="data:image/png;base64,{logo_base64}" class="sidebar-logo">
         <div class="sidebar-brand-title">SmartSeat</div>
         <div class="sidebar-brand-subtitle">Smart Stadium Ticket Pricing System</div>
     </div>
     """, unsafe_allow_html=True)
-    st.markdown("---")
-    st.markdown("### Match Details")
-    st.markdown("راجع تفاصيل المباريات قبل الانتقال إلى الحجز.")
+
+    lang_view = st.selectbox(
+        t("lang_label"),
+        [TXT["ar"]["arabic"], TXT["en"]["english"]],
+        index=0 if st.session_state.lang == "ar" else 1,
+        key="lang_match_sidebar"
+    )
+    st.session_state.lang = "ar" if lang_view == TXT["ar"]["arabic"] else "en"
 
 # =========================
-# تنقل الجوال فقط
+# تنقل الجوال
 # =========================
-st.markdown("""
+st.markdown(f"""
 <div class="mobile-nav-only">
     <div class="mobile-nav-box">
-        <div class="mobile-nav-title">التنقل السريع</div>
+        <div class="mobile-nav-title">{t('quick_access')}</div>
         <div class="mobile-links">
-            <a href="/">الرئيسية</a>
-            <a href="/Booking">الحجز</a>
-            <a href="/Support">الدعم</a>
+            <a href="/">{t('home')}</a>
+            <a href="/Booking">{t('booking')}</a>
+            <a href="/Support">{t('support')}</a>
         </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 # =========================
+# أعلى الصفحة
+# =========================
+top_col1, top_col2 = st.columns([4, 1])
+with top_col2:
+    page_lang = st.selectbox(
+        t("lang_label"),
+        [TXT["ar"]["arabic"], TXT["en"]["english"]],
+        index=0 if st.session_state.lang == "ar" else 1,
+        key="lang_match_top"
+    )
+    st.session_state.lang = "ar" if page_lang == TXT["ar"]["arabic"] else "en"
+
+# =========================
 # الهيدر
 # =========================
-st.markdown("""
+st.markdown(f"""
 <div class="hero-box">
-    <div class="hero-title">تفاصيل المباريات</div>
-    <div class="hero-subtitle">Match Details</div>
-    <div class="hero-text">
-        قبل الحجز، يمكنك هنا الاطلاع على تفاصيل كل مباراة من حيث نوعها، البطولة،
-        الملعب، الحكم، وتوقيت المباراة، حتى تكون لديك صورة واضحة قبل إتمام الحجز.
-    </div>
+    <div class="hero-title">{t('title')}</div>
+    <div class="hero-subtitle">{t('subtitle')}</div>
+    <div class="hero-text">{t('desc')}</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -532,59 +591,42 @@ for i, match in enumerate(matches):
             if match["image"].exists():
                 st.image(str(match["image"]), use_container_width=True)
             else:
-                st.warning(f"الصورة غير موجودة: {match['image'].name}")
+                st.warning(f"Missing image: {match['image'].name}")
 
-            st.markdown(
-                f'<div class="match-title">{match["name"]}</div>',
-                unsafe_allow_html=True
-            )
-            st.markdown(
-                f'<div class="info-line"><span class="info-label">نوع المباراة:</span> {match["type"]}</div>',
-                unsafe_allow_html=True
-            )
-            st.markdown(
-                f'<div class="info-line"><span class="info-label">البطولة:</span> {match["competition"]}</div>',
-                unsafe_allow_html=True
-            )
-            st.markdown(
-                f'<div class="info-line"><span class="info-label">الملعب:</span> {match["stadium"]}</div>',
-                unsafe_allow_html=True
-            )
-            st.markdown(
-                f'<div class="info-line"><span class="info-label">المدينة:</span> {match["city"]}</div>',
-                unsafe_allow_html=True
-            )
-            st.markdown(
-                f'<div class="info-line"><span class="info-label">الحكم:</span> {match["referee"]}</div>',
-                unsafe_allow_html=True
-            )
-            st.markdown(
-                f'<div class="info-line"><span class="info-label">التاريخ والوقت:</span> {match["datetime"]}</div>',
-                unsafe_allow_html=True
-            )
+            name = match["name_ar"] if st.session_state.lang == "ar" else match["name_en"]
+            match_type = match["type_ar"] if st.session_state.lang == "ar" else match["type_en"]
+            competition = match["competition_ar"] if st.session_state.lang == "ar" else match["competition_en"]
+            stadium = match["stadium_ar"] if st.session_state.lang == "ar" else match["stadium_en"]
+            city = match["city_ar"] if st.session_state.lang == "ar" else match["city_en"]
+            referee = match["referee_ar"] if st.session_state.lang == "ar" else match["referee_en"]
+            demand = match["demand_ar"] if st.session_state.lang == "ar" else match["demand_en"]
+            note = match["note_ar"] if st.session_state.lang == "ar" else match["note_en"]
+            parking = match["parking_ar"] if st.session_state.lang == "ar" else match["parking_en"]
+
+            st.markdown(f'<div class="match-title">{name}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="info-line"><span class="info-label">{t("match_type")}:</span> {match_type}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="info-line"><span class="info-label">{t("competition")}:</span> {competition}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="info-line"><span class="info-label">{t("stadium")}:</span> {stadium}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="info-line"><span class="info-label">{t("city")}:</span> {city}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="info-line"><span class="info-label">{t("referee")}:</span> {referee}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="info-line"><span class="info-label">{t("datetime")}:</span> {match["datetime"]}</div>', unsafe_allow_html=True)
 
             st.markdown(f"""
             <div class="status-row">
-                <div class="status-pill">فتح البوابات: {match["gates_open"]}</div>
-                <div class="status-pill">{match["demand"]}</div>
+                <div class="status-pill">{t("gates")}: {match["gates_open"]}</div>
+                <div class="status-pill">{demand}</div>
             </div>
             """, unsafe_allow_html=True)
 
             st.markdown(f"""
             <div class="note-box">
-                {match["note"]}<br><br>{match["parking"]}
+                {note}<br><br>{parking}
             </div>
             """, unsafe_allow_html=True)
 
-            if st.button(f"🎟️ احجز الآن - {match['name']}", key=f"book_{i}"):
-                st.session_state["selected_match"] = match["name"]
+            if st.button(f"{t('book_now')} - {name}", key=f"book_{i}"):
+                st.session_state["selected_match"] = match["name_ar"]
                 st.switch_page("pages/1_Booking.py")
 
-# =========================
-# الفوتر
-# =========================
-st.markdown("""
-<div class="footer">
-    SmartSeat Match Details • Final Year Project
-</div>
-""", unsafe_allow_html=True)
+st.markdown(f'<div class="footer">{t("footer")}</div>', unsafe_allow_html=True)
+conn.close()
