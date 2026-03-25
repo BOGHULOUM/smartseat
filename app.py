@@ -96,19 +96,21 @@ TXT = {
 • دعم اللغة العربية والإنجليزية""",
 
         "team_members": "أعضاء الفريق",
-        "team_members_text": """• Abdulaziz Khaled
-• Team Member 2
-• Team Member 3""",
+        "team_members_text": """Abdulaziz K H A Ghouloum - 230100166
+Anas A A M Alkandari - 240100716""",
 
         "demo_title": "نسخة تجريبية",
         "demo_text": """هذه النسخة من التطبيق مخصصة للتجربة والعرض فقط. يمكنك استخدام جميع الصفحات والخصائص وتجربة الحجز والتنقل واختيار وسائل الدفع المختلفة بدون أي خصم فعلي أو عملية دفع حقيقية. الهدف من هذه النسخة هو استعراض فكرة المشروع وآلية عمله بشكل كامل كمشروع تخرج.""",
 
-        "go_matches": "اذهب إلى المباريات",
-        "go_booking": "اذهب إلى الحجز",
-        "go_history": "اذهب إلى السجل",
-        "go_analytics": "اذهب إلى التحليلات",
-        "go_admin": "اذهب إلى الإدارة",
-        "go_support": "اذهب إلى الدعم",
+        "welcome_box_title": "مرحبًا بك",
+        "welcome_box_text": "أهلاً بك في SmartSeat، يمكنك من هنا استكشاف المشروع، تجربة الحجز، الاطلاع على الصفحات المختلفة، والتعرف على فكرة النظام وآلية عمله بشكل منظم واحترافي.",
+
+        "go_matches": "تفاصيل المباريات",
+        "go_booking": "الحجز",
+        "go_history": "السجل",
+        "go_analytics": "التحليلات",
+        "go_admin": "الإدارة",
+        "go_support": "الدعم",
 
         "footer": "SmartSeat • Final Year Project"
     },
@@ -170,19 +172,21 @@ TXT = {
 • Arabic and English support""",
 
         "team_members": "Team Members",
-        "team_members_text": """• Abdulaziz Khaled
-• Team Member 2
-• Team Member 3""",
+        "team_members_text": """Abdulaziz K H A Ghouloum - 230100166
+Anas A A M Alkandari - 240100716""",
 
         "demo_title": "Demo Version",
         "demo_text": """This version of the application is for demo and presentation purposes only. You can use all pages and features, test the booking flow, navigate through the system, and try all payment methods without any real charge or actual payment. The purpose of this version is to fully demonstrate the project idea and workflow as a graduation project.""",
 
-        "go_matches": "Go to Matches",
-        "go_booking": "Go to Booking",
-        "go_history": "Go to History",
-        "go_analytics": "Go to Analytics",
-        "go_admin": "Go to Admin",
-        "go_support": "Go to Support",
+        "welcome_box_title": "Welcome",
+        "welcome_box_text": "Welcome to SmartSeat. From here, you can explore the project, test the booking flow, browse different pages, and understand the system idea and workflow in a clean and professional way.",
+
+        "go_matches": "Matches",
+        "go_booking": "Booking",
+        "go_history": "History",
+        "go_analytics": "Analytics",
+        "go_admin": "Admin",
+        "go_support": "Support",
 
         "footer": "SmartSeat • Final Year Project"
     }
@@ -416,6 +420,23 @@ section[data-testid="stSidebar"] {{
     margin: auto;
 }}
 
+.quick-box {{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+    margin-bottom: 18px;
+}}
+
+.quick-title {{
+    color: #D4AF37;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}}
+
 .card {{
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(212,175,55,0.25);
@@ -440,21 +461,43 @@ section[data-testid="stSidebar"] {{
     white-space: pre-line;
 }}
 
-.quick-box {{
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(212,175,55,0.25);
-    border-radius: 24px;
+.member-box {{
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(212,175,55,0.35);
+    border-radius: 20px;
     padding: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}}
+
+.member-name {{
+    color: #EFD27B;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 2;
+    text-align: center;
+}}
+
+.welcome-box {{
+    background: linear-gradient(135deg, rgba(25,25,25,0.95), rgba(40,40,40,0.92));
+    border: 1px solid rgba(212,175,55,0.32);
+    border-radius: 24px;
+    padding: 18px 24px;
+    text-align: center;
     box-shadow: 0 8px 20px rgba(0,0,0,0.28);
     margin-bottom: 18px;
 }}
 
-.quick-title {{
+.welcome-box-title {{
     color: #D4AF37;
-    text-align: center;
-    font-size: 18px;
-    font-weight: 800;
-    margin-bottom: 12px;
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 8px;
+}}
+
+.welcome-box-text {{
+    color: #F0D98A;
+    font-size: 16px;
+    line-height: 1.9;
 }}
 
 label {{
@@ -473,6 +516,18 @@ input {{
     color: white !important;
 }}
 
+.stTabs [data-baseweb="tab-list"] {{
+    gap: 8px;
+}}
+
+.stTabs [data-baseweb="tab"] {{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 12px;
+    color: #E6C86E;
+    font-weight: 800;
+}}
+
 .stButton > button {{
     width: 100%;
     min-height: 56px;
@@ -488,6 +543,25 @@ input {{
 
 .stButton > button:hover {{
     box-shadow: 0 0 24px rgba(212,175,55,0.36);
+}}
+
+.success-box {{
+    background: linear-gradient(135deg, rgba(20,55,20,0.95), rgba(35,85,35,0.92));
+    border: 1px solid rgba(80,200,120,0.35);
+    border-radius: 20px;
+    padding: 16px;
+    text-align: center;
+    color: #d7ffd7;
+    font-size: 17px;
+    font-weight: 700;
+}}
+
+.footer {{
+    text-align:center;
+    color:#D4AF37;
+    font-size:15px;
+    font-weight:600;
+    margin-top:30px;
 }}
 
 .mobile-nav-only {{
@@ -527,23 +601,12 @@ input {{
     font-weight: 800;
 }}
 
-.success-box {{
-    background: linear-gradient(135deg, rgba(20,55,20,0.95), rgba(35,85,35,0.92));
-    border: 1px solid rgba(80,200,120,0.35);
-    border-radius: 20px;
-    padding: 16px;
-    text-align: center;
-    color: #d7ffd7;
-    font-size: 17px;
-    font-weight: 700;
+.desktop-only {{
+    display: block;
 }}
 
-.footer {{
-    text-align:center;
-    color:#D4AF37;
-    font-size:15px;
-    font-weight:600;
-    margin-top:30px;
+.mobile-only {{
+    display: none;
 }}
 
 @media (max-width: 768px) {{
@@ -555,9 +618,6 @@ input {{
     }}
     button[kind="header"] {{
         display: none !important;
-    }}
-    .mobile-nav-only {{
-        display:block !important;
     }}
     .block-container {{
         padding-top: 0.7rem !important;
@@ -580,12 +640,21 @@ input {{
     .hero-subtitle {{
         font-size: 15px !important;
     }}
-    .hero-text, .card-text {{
+    .hero-text, .card-text, .welcome-box-text {{
         font-size: 14px !important;
         line-height: 2 !important;
     }}
     .card-title {{
         font-size: 21px !important;
+    }}
+    .welcome-box-title {{
+        font-size: 20px !important;
+    }}
+    .desktop-only {{
+        display: none !important;
+    }}
+    .mobile-only {{
+        display: block !important;
     }}
 }}
 </style>
@@ -624,26 +693,7 @@ with st.sidebar:
             st.rerun()
 
 # =========================
-# تنقل الجوال
-# =========================
-st.markdown(f"""
-<div class="mobile-nav-only">
-    <div class="mobile-nav-box">
-        <div class="mobile-nav-title">{t('quick_access')}</div>
-        <div class="mobile-links">
-            <a href="/Match_Details">{t('match_details')}</a>
-            <a href="/Booking">{t('booking')}</a>
-            <a href="/History">{t('history')}</a>
-            <a href="/Analytics">{t('analytics')}</a>
-            <a href="/Admin">{t('admin')}</a>
-            <a href="/Support">{t('support')}</a>
-        </div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# =========================
-# أعلى الصفحة
+# اختيار اللغة أعلى الصفحة
 # =========================
 top_lang_col1, top_lang_col2 = st.columns([4, 1])
 with top_lang_col2:
@@ -749,49 +799,69 @@ if not st.session_state.logged_in:
 # لو مسجل دخول
 # =========================
 else:
-    # أزرار التنقل كاملة على الكمبيوتر
     st.markdown(f"""
-    <div class="quick-box">
-        <div class="quick-title">{t('quick_access')}</div>
+    <div class="welcome-box">
+        <div class="welcome-box-title">{t('welcome_box_title')}</div>
+        <div class="welcome-box-text">{t('welcome_box_text')}</div>
     </div>
     """, unsafe_allow_html=True)
 
-    q1, q2, q3 = st.columns(3)
-    with q1:
+    # الوصول السريع - كمبيوتر
+    st.markdown(f"""
+    <div class="desktop-only">
+        <div class="quick-box">
+            <div class="quick-title">{t('quick_access')}</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    c1, c2, c3, c4, c5, c6 = st.columns(6)
+    with c1:
+        st.markdown('<div class="desktop-only">', unsafe_allow_html=True)
         if st.button(t("go_matches"), key="go_matches_btn"):
             st.switch_page("pages/0_Match_Details.py")
-    with q2:
+        st.markdown('</div>', unsafe_allow_html=True)
+    with c2:
+        st.markdown('<div class="desktop-only">', unsafe_allow_html=True)
         if st.button(t("go_booking"), key="go_booking_btn"):
             st.switch_page("pages/1_Booking.py")
-    with q3:
-        if st.button(t("go_support"), key="go_support_btn"):
-            st.switch_page("pages/5_Support.py")
-
-    q4, q5, q6 = st.columns(3)
-    with q4:
+        st.markdown('</div>', unsafe_allow_html=True)
+    with c3:
+        st.markdown('<div class="desktop-only">', unsafe_allow_html=True)
         if st.button(t("go_history"), key="go_history_btn"):
             st.switch_page("pages/2_History.py")
-    with q5:
+        st.markdown('</div>', unsafe_allow_html=True)
+    with c4:
+        st.markdown('<div class="desktop-only">', unsafe_allow_html=True)
         if st.button(t("go_analytics"), key="go_analytics_btn"):
             st.switch_page("pages/3_Analytics.py")
-    with q6:
+        st.markdown('</div>', unsafe_allow_html=True)
+    with c5:
+        st.markdown('<div class="desktop-only">', unsafe_allow_html=True)
         if st.button(t("go_admin"), key="go_admin_btn"):
             st.switch_page("pages/4_Admin.py")
+        st.markdown('</div>', unsafe_allow_html=True)
+    with c6:
+        st.markdown('<div class="desktop-only">', unsafe_allow_html=True)
+        if st.button(t("go_support"), key="go_support_btn"):
+            st.switch_page("pages/5_Support.py")
+        st.markdown('</div>', unsafe_allow_html=True)
 
     st.write("")
 
-    row1_col1, row1_col2 = st.columns(2, gap="large")
-    with row1_col1:
+    # ترتيب الكمبيوتر
+    desktop_row1_col1, desktop_row1_col2 = st.columns(2, gap="large")
+    with desktop_row1_col1:
         st.markdown(f"""
-        <div class="card">
+        <div class="card desktop-only">
             <div class="card-title">{t('project_overview')}</div>
             <div class="card-text">{t('project_overview_text')}</div>
         </div>
         """, unsafe_allow_html=True)
 
-    with row1_col2:
+    with desktop_row1_col2:
         st.markdown(f"""
-        <div class="card">
+        <div class="card desktop-only">
             <div class="card-title">{t('system_features')}</div>
             <div class="card-text">{t('system_features_text')}</div>
         </div>
@@ -799,22 +869,71 @@ else:
 
     st.write("")
 
-    row2_col1, row2_col2 = st.columns(2, gap="large")
-    with row2_col1:
+    desktop_row2_col1, desktop_row2_col2 = st.columns(2, gap="large")
+    with desktop_row2_col1:
         st.markdown(f"""
-        <div class="card">
+        <div class="card desktop-only">
             <div class="card-title">{t('team_members')}</div>
-            <div class="card-text">{t('team_members_text')}</div>
+            <div class="member-box">
+                <div class="member-name">Abdulaziz K H A Ghouloum - 230100166</div>
+                <div class="member-name">Anas A A M Alkandari - 240100716</div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
-    with row2_col2:
+    with desktop_row2_col2:
         st.markdown(f"""
-        <div class="card">
+        <div class="card desktop-only">
             <div class="card-title">{t('demo_title')}</div>
             <div class="card-text">{t('demo_text')}</div>
         </div>
         """, unsafe_allow_html=True)
+
+    # ترتيب الهاتف
+    st.markdown(f"""
+    <div class="mobile-only">
+        <div class="card">
+            <div class="card-title">{t('project_overview')}</div>
+            <div class="card-text">{t('project_overview_text')}</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.write("")
+
+    st.markdown(f"""
+    <div class="mobile-only">
+        <div class="card">
+            <div class="card-title">{t('system_features')}</div>
+            <div class="card-text">{t('system_features_text')}</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.write("")
+
+    st.markdown(f"""
+    <div class="mobile-only">
+        <div class="card">
+            <div class="card-title">{t('demo_title')}</div>
+            <div class="card-text">{t('demo_text')}</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.write("")
+
+    st.markdown(f"""
+    <div class="mobile-only">
+        <div class="card">
+            <div class="card-title">{t('team_members')}</div>
+            <div class="member-box">
+                <div class="member-name">Abdulaziz K H A Ghouloum - 230100166</div>
+                <div class="member-name">Anas A A M Alkandari - 240100716</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 st.markdown(f'<div class="footer">{t("footer")}</div>', unsafe_allow_html=True)
 conn.close()
