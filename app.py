@@ -39,31 +39,38 @@ if "user_username" not in st.session_state:
 # =========================
 TXT = {
     "ar": {
-        "lang_label": "اللغة",
+        "lang_label": "اللغة / Language",
         "arabic": "العربية",
         "english": "English",
+
         "app_name": "SmartSeat",
         "app_subtitle": "Smart Stadium Ticket Pricing System",
-        "home_desc": "نظام ذكي لحجز تذاكر المباريات، يعرض تجربة حجز احترافية تشمل المباريات، الحجز، السجل، التحليلات، لوحة الإدارة، والدعم الفني.",
+        "home_desc": "نظام ذكي لحجز تذاكر المباريات يقدم تجربة استخدام احترافية تشمل عرض تفاصيل المباريات، الحجز، السجل، التحليلات، لوحة الإدارة، والدعم الفني ضمن واجهة حديثة ومتجاوبة تدعم الهاتف والكمبيوتر.",
+
         "login_tab": "تسجيل الدخول",
         "signup_tab": "إنشاء حساب",
         "login_title": "تسجيل الدخول",
         "signup_title": "إنشاء حساب جديد",
-        "auth_desc": "سجّل الدخول أو أنشئ حسابًا جديدًا للوصول إلى النظام.",
+        "auth_desc": "سجّل الدخول أو أنشئ حسابًا جديدًا للوصول إلى جميع صفحات النظام واستخدام كامل الخصائص.",
+
         "full_name": "الاسم الكامل",
         "username": "اسم المستخدم",
         "email": "البريد الإلكتروني",
         "password": "كلمة المرور",
         "confirm_password": "تأكيد كلمة المرور",
+
         "login_btn": "دخول",
         "signup_btn": "إنشاء الحساب",
         "logout_btn": "تسجيل خروج",
+
         "name_required": "يرجى تعبئة جميع الحقول.",
         "password_mismatch": "كلمتا المرور غير متطابقتين.",
         "password_short": "كلمة المرور يجب أن تكون 6 أحرف على الأقل.",
         "signup_success": "تم إنشاء الحساب بنجاح. يمكنك الآن تسجيل الدخول.",
+        "login_success": "تم تسجيل الدخول بنجاح.",
         "invalid_login": "اسم المستخدم أو كلمة المرور غير صحيحة.",
         "user_exists": "اسم المستخدم أو البريد الإلكتروني مستخدم مسبقًا.",
+
         "welcome": "مرحبًا",
         "quick_access": "الوصول السريع",
         "match_details": "تفاصيل المباريات",
@@ -72,52 +79,72 @@ TXT = {
         "analytics": "التحليلات",
         "admin": "الإدارة",
         "support": "الدعم",
+
         "project_overview": "نبذة عن المشروع",
-        "project_overview_text": "تم بناء هذا المشروع باستخدام Python وStreamlit وSQLite، وتم نشره على Streamlit Cloud وربطه مع GitHub. يهدف إلى تحسين تجربة حجز التذاكر من خلال نظام سهل الاستخدام ومرن.",
+        "project_overview_text": """تم تطوير مشروع SmartSeat كمشروع تخرج يهدف إلى تقديم نظام ذكي ومتكامل لحجز تذاكر المباريات بطريقة حديثة وسهلة الاستخدام. يعتمد المشروع على فكرة التسعير الديناميكي، حيث يتم احتساب السعر النهائي للتذكرة بناءً على نوع المباراة، نوع المقعد، القسم، وعدد التذاكر ومستوى الطلب. تم بناء النظام باستخدام Python مع مكتبة Streamlit لإنشاء واجهة تفاعلية، وقاعدة بيانات SQLite لتخزين الحسابات والحجوزات، ثم تم نشره على Streamlit Cloud وربطه مع GitHub لعرض نسخة حقيقية تعمل مباشرة عبر الهاتف أو الكمبيوتر. يركز المشروع على تحسين تجربة المستخدم من خلال واجهة فخمة، تنقل واضح، وخصائص عملية تساعد في إدارة الحجز بشكل احترافي.""",
+
         "system_features": "مميزات النظام",
-        "system_features_text": """
-• عرض تفاصيل المباريات
-• حجز التذاكر
-• التسعير الديناميكي
-• إنشاء QR Code
-• تحميل التذكرة PDF
-• سجل الحجوزات
-• التحليلات والرسوم البيانية
-• لوحة إدارة
+        "system_features_text": """• عرض تفاصيل المباريات
+• حجز التذاكر بشكل مباشر
+• نظام تسعير ديناميكي
+• إنشاء QR Code لكل حجز
+• تحميل التذكرة بصيغة PDF
+• سجل كامل للحجوزات
+• تحليلات ورسوم بيانية
+• لوحة إدارة Admin
 • دعم العملاء
-• دعم العربية والإنجليزية
-""",
+• دعم اللغة العربية والإنجليزية""",
+
+        "team_members": "أعضاء الفريق",
+        "team_members_text": """• Abdulaziz Khaled
+• Team Member 2
+• Team Member 3""",
+
+        "demo_title": "نسخة تجريبية",
+        "demo_text": """هذه النسخة من التطبيق مخصصة للتجربة والعرض فقط. يمكنك استخدام جميع الصفحات والخصائص وتجربة الحجز والتنقل واختيار وسائل الدفع المختلفة بدون أي خصم فعلي أو عملية دفع حقيقية. الهدف من هذه النسخة هو استعراض فكرة المشروع وآلية عمله بشكل كامل كمشروع تخرج.""",
+
         "go_matches": "اذهب إلى المباريات",
         "go_booking": "اذهب إلى الحجز",
+        "go_history": "اذهب إلى السجل",
+        "go_analytics": "اذهب إلى التحليلات",
+        "go_admin": "اذهب إلى الإدارة",
         "go_support": "اذهب إلى الدعم",
+
         "footer": "SmartSeat • Final Year Project"
     },
     "en": {
-        "lang_label": "Language",
+        "lang_label": "Language / اللغة",
         "arabic": "العربية",
         "english": "English",
+
         "app_name": "SmartSeat",
         "app_subtitle": "Smart Stadium Ticket Pricing System",
-        "home_desc": "An intelligent football ticket booking system that provides a professional booking experience including matches, booking, history, analytics, admin panel, and customer support.",
+        "home_desc": "A smart football ticket booking system that delivers a professional user experience including match details, booking, history, analytics, admin panel, and customer support in a modern responsive interface for both mobile and desktop.",
+
         "login_tab": "Login",
         "signup_tab": "Sign Up",
         "login_title": "Login",
         "signup_title": "Create New Account",
-        "auth_desc": "Login or create a new account to access the system.",
+        "auth_desc": "Login or create a new account to access all system pages and features.",
+
         "full_name": "Full Name",
         "username": "Username",
         "email": "Email",
         "password": "Password",
         "confirm_password": "Confirm Password",
+
         "login_btn": "Login",
         "signup_btn": "Create Account",
         "logout_btn": "Logout",
+
         "name_required": "Please fill in all fields.",
         "password_mismatch": "Passwords do not match.",
         "password_short": "Password must be at least 6 characters.",
         "signup_success": "Account created successfully. You can now login.",
+        "login_success": "Logged in successfully.",
         "invalid_login": "Invalid username or password.",
         "user_exists": "Username or email already exists.",
+
         "welcome": "Welcome",
         "quick_access": "Quick Access",
         "match_details": "Match Details",
@@ -126,30 +153,43 @@ TXT = {
         "analytics": "Analytics",
         "admin": "Admin",
         "support": "Support",
+
         "project_overview": "Project Overview",
-        "project_overview_text": "This project was built using Python, Streamlit, and SQLite. It is deployed on Streamlit Cloud and connected to GitHub. The goal is to improve the ticket booking experience through a flexible and user-friendly system.",
+        "project_overview_text": """SmartSeat was developed as a final year graduation project to provide a smart and integrated football ticket booking system with a modern and user-friendly experience. The project is based on dynamic pricing, where the final ticket price changes depending on the match type, seat type, section, ticket count, and demand level. The system was built using Python with Streamlit for the interactive interface and SQLite for storing accounts and bookings. It was then deployed on Streamlit Cloud and connected to GitHub to provide a real live version accessible from both mobile phones and computers. The project focuses on improving user experience through a premium interface, clear navigation, and practical features that support professional booking management.""",
+
         "system_features": "System Features",
-        "system_features_text": """
-• Match details
-• Ticket booking
-• Dynamic pricing
+        "system_features_text": """• Match details
+• Direct ticket booking
+• Dynamic pricing system
 • QR Code generation
 • PDF ticket download
-• Booking history
+• Full booking history
 • Analytics and charts
 • Admin panel
 • Customer support
-• Arabic and English support
-""",
+• Arabic and English support""",
+
+        "team_members": "Team Members",
+        "team_members_text": """• Abdulaziz Khaled
+• Team Member 2
+• Team Member 3""",
+
+        "demo_title": "Demo Version",
+        "demo_text": """This version of the application is for demo and presentation purposes only. You can use all pages and features, test the booking flow, navigate through the system, and try all payment methods without any real charge or actual payment. The purpose of this version is to fully demonstrate the project idea and workflow as a graduation project.""",
+
         "go_matches": "Go to Matches",
         "go_booking": "Go to Booking",
+        "go_history": "Go to History",
+        "go_analytics": "Go to Analytics",
+        "go_admin": "Go to Admin",
         "go_support": "Go to Support",
+
         "footer": "SmartSeat • Final Year Project"
     }
 }
 
 def t(key):
-    return TXT[st.session_state.lang][key]
+    return TXT[st.session_state.lang].get(key, key)
 
 # =========================
 # أدوات
@@ -371,8 +411,8 @@ section[data-testid="stSidebar"] {{
 .hero-text {{
     color: #E6C86E;
     font-size: 16px;
-    line-height: 1.9;
-    max-width: 900px;
+    line-height: 1.95;
+    max-width: 950px;
     margin: auto;
 }}
 
@@ -380,24 +420,41 @@ section[data-testid="stSidebar"] {{
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(212,175,55,0.25);
     border-radius: 24px;
-    padding: 20px;
+    padding: 22px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.28);
     height: 100%;
 }}
 
 .card-title {{
     color: #D4AF37;
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 900;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }}
 
 .card-text {{
     color: #F0D98A;
-    font-size: 16px;
-    line-height: 1.9;
+    font-size: 17px;
+    line-height: 2;
     white-space: pre-line;
+}}
+
+.quick-box {{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+    margin-bottom: 18px;
+}}
+
+.quick-title {{
+    color: #D4AF37;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 12px;
 }}
 
 label {{
@@ -405,7 +462,8 @@ label {{
     font-weight: 700 !important;
 }}
 
-.stTextInput > div > div {{
+.stTextInput > div > div,
+div[data-baseweb="select"] > div {{
     background-color: rgba(15,15,15,0.95) !important;
     border-radius: 16px !important;
     border: 1px solid rgba(212,175,55,0.25) !important;
@@ -523,11 +581,11 @@ input {{
         font-size: 15px !important;
     }}
     .hero-text, .card-text {{
-        font-size: 13px !important;
-        line-height: 1.9 !important;
+        font-size: 14px !important;
+        line-height: 2 !important;
     }}
     .card-title {{
-        font-size: 20px !important;
+        font-size: 21px !important;
     }}
 }}
 </style>
@@ -575,6 +633,9 @@ st.markdown(f"""
         <div class="mobile-links">
             <a href="/Match_Details">{t('match_details')}</a>
             <a href="/Booking">{t('booking')}</a>
+            <a href="/History">{t('history')}</a>
+            <a href="/Analytics">{t('analytics')}</a>
+            <a href="/Admin">{t('admin')}</a>
             <a href="/Support">{t('support')}</a>
         </div>
     </div>
@@ -606,7 +667,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # =========================
-# محتوى الصفحة
+# لو مو مسجل دخول
 # =========================
 if not st.session_state.logged_in:
     st.markdown(f"""
@@ -683,10 +744,44 @@ if not st.session_state.logged_in:
                         ))
                         conn.commit()
                         st.markdown(f'<div class="success-box">{t("signup_success")}</div>', unsafe_allow_html=True)
-else:
-    c1, c2 = st.columns(2, gap="large")
 
-    with c1:
+# =========================
+# لو مسجل دخول
+# =========================
+else:
+    # أزرار التنقل كاملة على الكمبيوتر
+    st.markdown(f"""
+    <div class="quick-box">
+        <div class="quick-title">{t('quick_access')}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    q1, q2, q3 = st.columns(3)
+    with q1:
+        if st.button(t("go_matches"), key="go_matches_btn"):
+            st.switch_page("pages/0_Match_Details.py")
+    with q2:
+        if st.button(t("go_booking"), key="go_booking_btn"):
+            st.switch_page("pages/1_Booking.py")
+    with q3:
+        if st.button(t("go_support"), key="go_support_btn"):
+            st.switch_page("pages/5_Support.py")
+
+    q4, q5, q6 = st.columns(3)
+    with q4:
+        if st.button(t("go_history"), key="go_history_btn"):
+            st.switch_page("pages/2_History.py")
+    with q5:
+        if st.button(t("go_analytics"), key="go_analytics_btn"):
+            st.switch_page("pages/3_Analytics.py")
+    with q6:
+        if st.button(t("go_admin"), key="go_admin_btn"):
+            st.switch_page("pages/4_Admin.py")
+
+    st.write("")
+
+    row1_col1, row1_col2 = st.columns(2, gap="large")
+    with row1_col1:
         st.markdown(f"""
         <div class="card">
             <div class="card-title">{t('project_overview')}</div>
@@ -694,7 +789,7 @@ else:
         </div>
         """, unsafe_allow_html=True)
 
-    with c2:
+    with row1_col2:
         st.markdown(f"""
         <div class="card">
             <div class="card-title">{t('system_features')}</div>
@@ -704,16 +799,22 @@ else:
 
     st.write("")
 
-    a1, a2, a3 = st.columns(3)
-    with a1:
-        if st.button(t("go_matches"), key="go_matches_btn"):
-            st.switch_page("pages/0_Match_Details.py")
-    with a2:
-        if st.button(t("go_booking"), key="go_booking_btn"):
-            st.switch_page("pages/1_Booking.py")
-    with a3:
-        if st.button(t("go_support"), key="go_support_btn"):
-            st.switch_page("pages/5_Support.py")
+    row2_col1, row2_col2 = st.columns(2, gap="large")
+    with row2_col1:
+        st.markdown(f"""
+        <div class="card">
+            <div class="card-title">{t('team_members')}</div>
+            <div class="card-text">{t('team_members_text')}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with row2_col2:
+        st.markdown(f"""
+        <div class="card">
+            <div class="card-title">{t('demo_title')}</div>
+            <div class="card-text">{t('demo_text')}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
 st.markdown(f'<div class="footer">{t("footer")}</div>', unsafe_allow_html=True)
-conn.close()
+conn.close(
