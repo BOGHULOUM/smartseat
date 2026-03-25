@@ -96,8 +96,6 @@ TXT = {
 • دعم اللغة العربية والإنجليزية""",
 
         "team_members": "أعضاء الفريق",
-        "team_members_text": """Abdulaziz K H A Ghouloum - 230100166
-Anas A A M Alkandari - 240100716""",
 
         "demo_title": "نسخة تجريبية",
         "demo_text": """هذه النسخة من التطبيق مخصصة للتجربة والعرض فقط. يمكنك استخدام جميع الصفحات والخصائص وتجربة الحجز والتنقل واختيار وسائل الدفع المختلفة بدون أي خصم فعلي أو عملية دفع حقيقية. الهدف من هذه النسخة هو استعراض فكرة المشروع وآلية عمله بشكل كامل كمشروع تخرج.""",
@@ -172,8 +170,6 @@ Anas A A M Alkandari - 240100716""",
 • Arabic and English support""",
 
         "team_members": "Team Members",
-        "team_members_text": """Abdulaziz K H A Ghouloum - 230100166
-Anas A A M Alkandari - 240100716""",
 
         "demo_title": "Demo Version",
         "demo_text": """This version of the application is for demo and presentation purposes only. You can use all pages and features, test the booking flow, navigate through the system, and try all payment methods without any real charge or actual payment. The purpose of this version is to fully demonstrate the project idea and workflow as a graduation project.""",
@@ -198,7 +194,7 @@ def t(key):
 # =========================
 # أدوات
 # =========================
-def get_base64(img_path):
+def get_base64(img_path: Path):
     with open(img_path, "rb") as f:
         return base64.b64encode(f.read()).decode()
 
@@ -564,10 +560,6 @@ input {{
     margin-top:30px;
 }}
 
-.mobile-nav-only {{
-    display: none;
-}}
-
 .desktop-only {{
     display: block;
 }}
@@ -901,6 +893,38 @@ else:
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+    st.write("")
+
+    # الوصول السريع - هاتف فقط - آخر الصفحة
+    st.markdown(f"""
+    <div class="mobile-only">
+        <div class="quick-box">
+            <div class="quick-title">{t('quick_access')}</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    m1, m2 = st.columns(2)
+    with m1:
+        st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
+        if st.button(t("go_matches"), key="m_go_matches"):
+            st.switch_page("pages/0_Match_Details.py")
+        if st.button(t("go_history"), key="m_go_history"):
+            st.switch_page("pages/2_History.py")
+        if st.button(t("go_admin"), key="m_go_admin"):
+            st.switch_page("pages/4_Admin.py")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with m2:
+        st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
+        if st.button(t("go_booking"), key="m_go_booking"):
+            st.switch_page("pages/1_Booking.py")
+        if st.button(t("go_analytics"), key="m_go_analytics"):
+            st.switch_page("pages/3_Analytics.py")
+        if st.button(t("go_support"), key="m_go_support"):
+            st.switch_page("pages/5_Support.py")
+        st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown(f'<div class="footer">{t("footer")}</div>', unsafe_allow_html=True)
 conn.close()
