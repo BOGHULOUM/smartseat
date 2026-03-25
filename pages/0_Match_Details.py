@@ -52,7 +52,7 @@ if "user_name" not in st.session_state:
 # =========================
 TXT = {
     "ar": {
-        "lang_label": "اللغة",
+        "lang_label": "Language/اللغة",
         "arabic": "العربية",
         "english": "English",
         "title": "تفاصيل المباريات",
