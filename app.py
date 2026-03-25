@@ -11,7 +11,7 @@ from datetime import datetime
 base_dir = Path(__file__).parent
 assets_dir = base_dir / "assets"
 logo_path = assets_dir / "logo.png"
-db_path = base_dir / "tickets.db"
+db_path = assets_dir / "tickets.db"
 
 st.set_page_config(
     page_title="SmartSeat",
@@ -539,7 +539,7 @@ section[data-testid="stSidebar"] {{
 }}
 
 .mobile-bottom-quick {{
-    display: none;
+    display: none !important;
 }}
 
 .mobile-bottom-links {{
@@ -944,22 +944,25 @@ else:
     st.write("")
 
     # الوصول السريع - هاتف فقط - آخر الصفحة - 3 سطور
-    st.markdown(f"""
-    <div class="mobile-bottom-quick">
-        <div class="quick-box">
-            <div class="quick-title">{t('quick_access')}</div>
-        </div>
+    st.markdown(
+        f"""
+        <div class="mobile-bottom-quick">
+            <div class="quick-box">
+                <div class="quick-title">{t('quick_access')}</div>
+            </div>
 
-        <div class="mobile-bottom-links">
-            <a href="/Match_Details">{t('go_matches')}</a>
-            <a href="/Booking">{t('go_booking')}</a>
-            <a href="/History">{t('go_history')}</a>
-            <a href="/Analytics">{t('go_analytics')}</a>
-            <a href="/Admin">{t('go_admin')}</a>
-            <a href="/Support">{t('go_support')}</a>
+            <div class="mobile-bottom-links">
+                <a href="/Match_Details">{t('go_matches')}</a>
+                <a href="/Booking">{t('go_booking')}</a>
+                <a href="/History">{t('go_history')}</a>
+                <a href="/Analytics">{t('go_analytics')}</a>
+                <a href="/Admin">{t('go_admin')}</a>
+                <a href="/Support">{t('go_support')}</a>
+            </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
 
 st.markdown(f'<div class="footer">{t("footer")}</div>', unsafe_allow_html=True)
 conn.close()
