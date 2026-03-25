@@ -481,7 +481,7 @@ with c2:
     st.markdown("""
     <div class="contact-card">
         <div class="contact-title">📧 البريد الإلكتروني</div>
-        <div class="contact-line">230100166@Ktech.edu.kw</div>
+        <div class="contact-line">@Ktech.edu.kw230100166</div>
         <div class="contact-line">240100716@Ktech.edu.kw</div>
     </div>
     """, unsafe_allow_html=True)
