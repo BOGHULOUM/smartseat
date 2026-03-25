@@ -568,39 +568,6 @@ input {{
     display: none;
 }}
 
-.mobile-nav-box {{
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(212,175,55,0.25);
-    border-radius: 22px;
-    padding: 14px 12px 6px 12px;
-    margin-bottom: 16px;
-}}
-
-.mobile-nav-title {{
-    color: #D4AF37;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 800;
-    margin-bottom: 10px;
-}}
-
-.mobile-links {{
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
-}}
-
-.mobile-links a {{
-    text-decoration: none !important;
-    color: black !important;
-    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
-    padding: 10px 14px;
-    border-radius: 14px;
-    font-size: 14px;
-    font-weight: 800;
-}}
-
 .desktop-only {{
     display: block;
 }}
@@ -806,7 +773,7 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    # الوصول السريع - كمبيوتر
+    # الوصول السريع - كمبيوتر فقط
     st.markdown(f"""
     <div class="desktop-only">
         <div class="quick-box">
