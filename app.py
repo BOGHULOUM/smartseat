@@ -817,4 +817,4 @@ else:
         """, unsafe_allow_html=True)
 
 st.markdown(f'<div class="footer">{t("footer")}</div>', unsafe_allow_html=True)
-conn.close(
+conn.close()
