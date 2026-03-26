@@ -934,7 +934,7 @@ else:
         <div class="card">
             <div class="card-title">{t('team_members')}</div>
             <div class="member-box">
-                <div class="member-name">Abdulaziz K H A Ghouloum - 230100166</div>
+                <div class="member-name">Abdulaziz K H Ghouloum - 230100166</div>
                 <div class="member-name">Anas A A M Alkandari - 240100716</div>
             </div>
         </div>
@@ -944,25 +944,36 @@ else:
     st.write("")
 
      # الوصول السريع - هاتف فقط - آخر الصفحة - 3 سطور
+        # الوصول السريع - هاتف فقط - آخر الصفحة
     st.markdown(
         f"""
-        <div class="mobile-bottom-quick">
+        <div class="mobile-only">
             <div class="quick-box">
                 <div class="quick-title">{t('quick_access')}</div>
-            </div>
-
-            <div class="mobile-bottom-links">
-                <a href="/Match_Details">{t('go_matches')}</a>
-                <a href="/Booking">{t('go_booking')}</a>
-                <a href="/History">{t('go_history')}</a>
-                <a href="/Analytics">{t('go_analytics')}</a>
-                <a href="/Admin">{t('go_admin')}</a>
-                <a href="/Support">{t('go_support')}</a>
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-st.markdown(f'<div class="footer">{t("footer")}</div>', unsafe_allow_html=True)
-conn.close()
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
+        if st.button(t('go_matches'), key="m1"):
+            st.switch_page("pages/0_Match_Details.py")
+        if st.button(t('go_history'), key="m3"):
+            st.switch_page("pages/2_History.py")
+        if st.button(t('go_admin'), key="m5"):
+            st.switch_page("pages/4_Admin.py")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with col2:
+        st.markdown('<div class="mobile-only">', unsafe_allow_html=True)
+        if st.button(t('go_booking'), key="m2"):
+            st.switch_page("pages/1_Booking.py")
+        if st.button(t('go_analytics'), key="m4"):
+            st.switch_page("pages/3_Analytics.py")
+        if st.button(t('go_support'), key="m6"):
+            st.switch_page("pages/5_Support.py")
+        st.markdown('</div>', unsafe_allow_html=True)
