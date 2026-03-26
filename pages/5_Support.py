@@ -16,6 +16,109 @@ st.set_page_config(
 )
 
 # =========================
+# Session State
+# =========================
+if "lang" not in st.session_state:
+    st.session_state.lang = "ar"
+
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if "user_name" not in st.session_state:
+    st.session_state.user_name = ""
+
+# =========================
+# فحص هل الجهاز هاتف
+# =========================
+try:
+    user_agent = st.context.headers.get("User-Agent", "")
+except Exception:
+    user_agent = ""
+
+is_mobile = any(x in user_agent for x in ["Mobile", "Android", "iPhone"])
+
+# =========================
+# الترجمة
+# =========================
+TXT = {
+    "ar": {
+        "lang_label": "Language/اللغة",
+        "arabic": "العربية",
+        "english": "English",
+
+        "sidebar_title": "دعم العملاء",
+        "sidebar_desc": "لأي مشكلة أو استفسار أو شكوى، تواصل معنا مباشرة.",
+
+        "page_title": "دعم العملاء",
+        "page_subtitle": "Customer Support",
+        "page_desc": "إذا واجهتك أي مشكلة في الحجز أو الدفع أو احتجت إلى مساعدة إضافية، يمكنك التواصل معنا من خلال أرقام الدعم أو البريد الإلكتروني، أو إرسال رسالتك مباشرة من النموذج أدناه.",
+
+        "phones_title": "📞 أرقام الدعم والتواصل",
+        "phone1": "هاتف / واتساب 1",
+        "phone2": "هاتف / واتساب 2",
+
+        "email_title": "📧 البريد الإلكتروني",
+
+        "form_title": "إرسال شكوى أو استفسار",
+        "name": "الاسم",
+        "phone": "رقم الهاتف",
+        "message": "اكتب رسالتك",
+        "send_btn": "📨 إرسال الطلب",
+        "success_msg": "✅ تم إرسال طلبك بنجاح، وسيتم التواصل معك في أقرب وقت ممكن.",
+        "fill_all": "يرجى تعبئة جميع الحقول قبل الإرسال.",
+
+        "home": "الرئيسية",
+        "matches": "المباريات",
+        "booking": "الحجز",
+        "history": "السجل",
+        "analytics": "التحليلات",
+        "admin": "الإدارة",
+        "quick_access": "الوصول السريع",
+
+        "footer": "SmartSeat Support • Final Year Project"
+    },
+    "en": {
+        "lang_label": "Language",
+        "arabic": "العربية",
+        "english": "English",
+
+        "sidebar_title": "Customer Support",
+        "sidebar_desc": "For any issue, inquiry, or complaint, contact us directly.",
+
+        "page_title": "Customer Support",
+        "page_subtitle": "Customer Support",
+        "page_desc": "If you face any issue with booking or payment, or need additional help, you can contact us through the support numbers or email, or send your message directly using the form below.",
+
+        "phones_title": "📞 Support Contact Numbers",
+        "phone1": "Phone / WhatsApp 1",
+        "phone2": "Phone / WhatsApp 2",
+
+        "email_title": "📧 Email Address",
+
+        "form_title": "Send a Complaint or Inquiry",
+        "name": "Name",
+        "phone": "Phone Number",
+        "message": "Write your message",
+        "send_btn": "📨 Send Request",
+        "success_msg": "✅ Your request has been sent successfully, and we will contact you as soon as possible.",
+        "fill_all": "Please fill in all fields before sending.",
+
+        "home": "Home",
+        "matches": "Matches",
+        "booking": "Booking",
+        "history": "History",
+        "analytics": "Analytics",
+        "admin": "Admin",
+        "quick_access": "Quick Access",
+
+        "footer": "SmartSeat Support • Final Year Project"
+    }
+}
+
+def t(k):
+    return TXT[st.session_state.lang][k]
+
+# =========================
 # تحويل اللوقو
 # =========================
 def get_base64(img_path):
@@ -56,7 +159,6 @@ html, body, [class*="css"] {{
     color: white;
 }}
 
-/* سايدبار الكمبيوتر */
 section[data-testid="stSidebar"] {{
     background: linear-gradient(180deg, #0b0b0b 0%, #151515 100%);
     border-left: 1px solid rgba(212,175,55,0.20);
@@ -122,8 +224,8 @@ section[data-testid="stSidebar"] {{
 }}
 
 .block-container {{
-    padding-top: 1.2rem;
-    padding-bottom: 2rem;
+    padding-top: 0.45rem !important;
+    padding-bottom: 1rem !important;
     max-width: 1150px;
 }}
 
@@ -131,8 +233,8 @@ section[data-testid="stSidebar"] {{
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: -5px;
-    margin-bottom: -16px;
+    margin-top: -4px;
+    margin-bottom: -8px;
 }}
 
 .logo-wrap img {{
@@ -148,8 +250,8 @@ section[data-testid="stSidebar"] {{
     padding: 24px 30px;
     text-align: center;
     box-shadow: 0 12px 30px rgba(0,0,0,0.42);
-    margin-top: 0px;
-    margin-bottom: 22px;
+    margin-top: 0;
+    margin-bottom: 12px;
 }}
 
 .hero-title {{
@@ -218,47 +320,32 @@ section[data-testid="stSidebar"] {{
     font-weight: 800;
 }}
 
-.mobile-nav-only {{
-    display: none;
+.ltr-text {{
+    direction: ltr;
+    unicode-bidi: embed;
+    display: inline-block;
 }}
 
-.mobile-nav-box {{
+.quick-box {{
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(212,175,55,0.25);
-    border-radius: 22px;
-    padding: 14px 12px 6px 12px;
-    margin-bottom: 16px;
-}}
-
-.mobile-nav-title {{
-    color: #D4AF37;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 800;
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+    margin-top: 10px;
     margin-bottom: 10px;
 }}
 
-.mobile-links {{
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
-}}
-
-.mobile-links a {{
-    text-decoration: none !important;
-    color: black !important;
-    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
-    padding: 10px 14px;
-    border-radius: 14px;
-    font-size: 14px;
+.quick-title {{
+    color: #D4AF37;
+    text-align: center;
+    font-size: 18px;
     font-weight: 800;
-    display: inline-block;
-    box-shadow: 0 0 14px rgba(212,175,55,0.20);
+    margin-bottom: 0;
 }}
 
-.mobile-links a:hover {{
-    transform: translateY(-2px);
+.mobile-only {{
+    display: none;
 }}
 
 label {{
@@ -324,11 +411,10 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     color: #D4AF37;
     font-size: 15px;
     font-weight: 600;
-    margin-top: 24px;
+    margin-top: 16px;
     opacity: 0.95;
 }}
 
-/* الجوال فقط */
 @media (max-width: 768px) {{
     section[data-testid="stSidebar"] {{
         display: none !important;
@@ -342,13 +428,13 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
         display: none !important;
     }}
 
-    .mobile-nav-only {{
+    .mobile-only {{
         display: block !important;
     }}
 
     .block-container {{
-        padding-top: 0.7rem !important;
-        padding-bottom: 1rem !important;
+        padding-top: 0.3rem !important;
+        padding-bottom: 0.7rem !important;
         padding-right: 0.7rem !important;
         padding-left: 0.7rem !important;
         max-width: 100% !important;
@@ -356,7 +442,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 
     .logo-wrap {{
         margin-top: 0 !important;
-        margin-bottom: -6px !important;
+        margin-bottom: -4px !important;
     }}
 
     .logo-wrap img {{
@@ -367,7 +453,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     .hero-box {{
         padding: 18px 14px !important;
         border-radius: 22px !important;
-        margin-bottom: 16px !important;
+        margin-bottom: 10px !important;
     }}
 
     .hero-title {{
@@ -405,7 +491,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 
     .footer {{
         font-size: 13px !important;
-        margin-top: 16px !important;
+        margin-top: 14px !important;
     }}
 }}
 </style>
@@ -429,36 +515,40 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
+    lang_view = st.selectbox(
+        t("lang_label"),
+        [TXT["ar"]["arabic"], TXT["en"]["english"]],
+        index=0 if st.session_state.lang == "ar" else 1,
+        key="support_lang_sidebar"
+    )
+    st.session_state.lang = "ar" if lang_view == TXT["ar"]["arabic"] else "en"
+
     st.markdown("---")
-    st.markdown("### Customer Support")
-    st.markdown("لأي مشكلة أو استفسار أو شكوى، تواصل معنا مباشرة.")
+    st.markdown(f"### {t('sidebar_title')}")
+    st.markdown(t("sidebar_desc"))
 
 # =========================
-# تنقل الجوال فقط
+# أعلى الصفحة
 # =========================
-st.markdown("""
-<div class="mobile-nav-only">
-    <div class="mobile-nav-box">
-        <div class="mobile-nav-title">التنقل السريع</div>
-        <div class="mobile-links">
-            <a href="/">الرئيسية</a>
-            <a href="/Booking">الحجز</a>
-            <a href="/History">السجل</a>
-        </div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+top_lang_col1, top_lang_col2 = st.columns([4, 1])
+with top_lang_col2:
+    page_lang = st.selectbox(
+        t("lang_label"),
+        [TXT["ar"]["arabic"], TXT["en"]["english"]],
+        index=0 if st.session_state.lang == "ar" else 1,
+        key="support_lang_top"
+    )
+    st.session_state.lang = "ar" if page_lang == TXT["ar"]["arabic"] else "en"
 
 # =========================
 # الهيدر
 # =========================
-st.markdown("""
+st.markdown(f"""
 <div class="hero-box">
-    <div class="hero-title">دعم العملاء</div>
-    <div class="hero-subtitle">Customer Support</div>
+    <div class="hero-title">{t('page_title')}</div>
+    <div class="hero-subtitle">{t('page_subtitle')}</div>
     <div class="hero-text">
-        إذا واجهتك أي مشكلة في الحجز أو الدفع أو احتجت إلى مساعدة إضافية،
-        يمكنك التواصل معنا من خلال أرقام الدعم أو البريد الإلكتروني، أو إرسال رسالتك مباشرة من النموذج أدناه.
+        {t('page_desc')}
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -469,20 +559,20 @@ st.markdown("""
 c1, c2 = st.columns(2, gap="large")
 
 with c1:
-    st.markdown("""
+    st.markdown(f"""
     <div class="contact-card">
-        <div class="contact-title">📞 أرقام الدعم والتواصل</div>
-        <div class="contact-line"><span class="contact-label">هاتف / واتساب 1:</span><br>+965 99474516</div>
-        <div class="contact-line"><span class="contact-label">هاتف / واتساب 2:</span><br>+965 50284185</div>
+        <div class="contact-title">{t('phones_title')}</div>
+        <div class="contact-line"><span class="contact-label">{t('phone1')}:</span><br><span class="ltr-text">+965 99474516</span></div>
+        <div class="contact-line"><span class="contact-label">{t('phone2')}:</span><br><span class="ltr-text">+965 50284185</span></div>
     </div>
     """, unsafe_allow_html=True)
 
 with c2:
-    st.markdown("""
+    st.markdown(f"""
     <div class="contact-card">
-        <div class="contact-title">📧 البريد الإلكتروني</div>
-        <div class="contact-line">230100166@Ktech.edu.kw</div>
-        <div class="contact-line">240100716@Ktech.edu.kw</div>
+        <div class="contact-title">{t('email_title')}</div>
+        <div class="contact-line"><span class="ltr-text">230100166@Ktech.edu.kw</span></div>
+        <div class="contact-line"><span class="ltr-text">240100716@Ktech.edu.kw</span></div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -490,29 +580,71 @@ with c2:
 # نموذج الدعم
 # =========================
 with st.container(border=True):
-    st.markdown('<div class="section-title">إرسال شكوى أو استفسار</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-title">{t("form_title")}</div>', unsafe_allow_html=True)
 
-    name = st.text_input("الاسم")
-    phone = st.text_input("رقم الهاتف")
-    message = st.text_area("اكتب رسالتك", height=180)
+    name = st.text_input(t("name"))
+    phone = st.text_input(t("phone"))
+    message = st.text_area(t("message"), height=180)
 
-    send_clicked = st.button("📨 إرسال الطلب")
+    send_clicked = st.button(t("send_btn"))
 
     if send_clicked:
         if name.strip() and phone.strip() and message.strip():
-            st.markdown("""
+            st.markdown(f"""
             <div class="success-box">
-                ✅ تم إرسال طلبك بنجاح، وسيتم التواصل معك في أقرب وقت ممكن.
+                {t("success_msg")}
             </div>
             """, unsafe_allow_html=True)
         else:
-            st.warning("يرجى تعبئة جميع الحقول قبل الإرسال.")
+            st.warning(t("fill_all"))
+
+# =========================
+# التنقل - هاتف فقط - آخر الصفحة
+# =========================
+if is_mobile:
+    st.markdown(
+        f"""
+        <div class="mobile-only">
+            <div class="quick-box">
+                <div class="quick-title">{t('quick_access')}</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # صف 1
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('home'), key="m_home_5", use_container_width=True):
+            st.switch_page("app.py")
+    with col2:
+        if st.button(t('matches'), key="m_matches_5", use_container_width=True):
+            st.switch_page("pages/0_Match_Details.py")
+
+    # صف 2
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('booking'), key="m_booking_5", use_container_width=True):
+            st.switch_page("pages/1_Booking.py")
+    with col2:
+        if st.button(t('history'), key="m_history_5", use_container_width=True):
+            st.switch_page("pages/2_History.py")
+
+    # صف 3
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('analytics'), key="m_analytics_5", use_container_width=True):
+            st.switch_page("pages/3_Analytics.py")
+    with col2:
+        if st.button(t('admin'), key="m_admin_5", use_container_width=True):
+            st.switch_page("pages/4_Admin.py")
 
 # =========================
 # الفوتر
 # =========================
-st.markdown("""
+st.markdown(f"""
 <div class="footer">
-    SmartSeat Support • Final Year Project
+    {t("footer")}
 </div>
 """, unsafe_allow_html=True)
