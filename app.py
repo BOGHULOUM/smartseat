@@ -11,7 +11,7 @@ from datetime import datetime
 base_dir = Path(__file__).parent
 assets_dir = base_dir / "assets"
 logo_path = assets_dir / "logo.png"
-db_path = assets_dir / "tickets.db"
+db_path = base_dir / "tickets.db"
 
 st.set_page_config(
     page_title="SmartSeat",
@@ -37,7 +37,11 @@ if "user_username" not in st.session_state:
 # =========================
 # فحص هل الجهاز هاتف
 # =========================
-user_agent = st.context.headers.get("User-Agent", "")
+try:
+    user_agent = st.context.headers.get("User-Agent", "")
+except Exception:
+    user_agent = ""
+
 is_mobile = any(x in user_agent for x in ["Mobile", "Android", "iPhone"])
 
 # =========================
@@ -368,8 +372,8 @@ section[data-testid="stSidebar"] {{
 }}
 
 .block-container {{
-    padding-top: 1.1rem;
-    padding-bottom: 2rem;
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.6rem !important;
     max-width: 1280px;
 }}
 
@@ -378,7 +382,7 @@ section[data-testid="stSidebar"] {{
     justify-content: center;
     align-items: center;
     margin-top: -4px;
-    margin-bottom: -10px;
+    margin-bottom: -6px;
 }}
 
 .logo-wrap img {{
@@ -396,8 +400,8 @@ section[data-testid="stSidebar"] {{
     padding: 24px 30px;
     text-align: center;
     box-shadow: 0 12px 30px rgba(0,0,0,0.36);
-    margin-top: 0;
-    margin-bottom: 22px;
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
 }}
 
 .hero-title {{
@@ -429,7 +433,7 @@ section[data-testid="stSidebar"] {{
     padding: 18px 24px;
     text-align: center;
     box-shadow: 0 8px 20px rgba(0,0,0,0.28);
-    margin-bottom: 18px;
+    margin-bottom: 10px !important;
 }}
 
 .welcome-box-title {{
@@ -452,6 +456,8 @@ section[data-testid="stSidebar"] {{
     padding: 22px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.28);
     height: 100%;
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
 }}
 
 .card-title {{
@@ -495,7 +501,7 @@ section[data-testid="stSidebar"] {{
     border-radius: 24px;
     padding: 18px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.28);
-    margin-bottom: 18px;
+    margin-bottom: 10px !important;
 }}
 
 .desktop-quick-title {{
@@ -503,28 +509,7 @@ section[data-testid="stSidebar"] {{
     text-align: center;
     font-size: 18px;
     font-weight: 800;
-    margin-bottom: 14px;
-}}
-
-.desktop-quick-links {{
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: nowrap;
-}}
-
-.desktop-quick-links a {{
-    text-decoration: none !important;
-    color: black !important;
-    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
-    padding: 12px 16px;
-    border-radius: 16px;
-    font-size: 16px;
-    font-weight: 800;
-    box-shadow: 0 0 18px rgba(212,175,55,0.22);
-    display: inline-block;
-    text-align: center;
-    min-width: 120px;
+    margin-bottom: 6px;
 }}
 
 .quick-box {{
@@ -533,7 +518,7 @@ section[data-testid="stSidebar"] {{
     border-radius: 24px;
     padding: 18px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.28);
-    margin-bottom: 18px;
+    margin-bottom: 10px !important;
 }}
 
 .quick-title {{
@@ -541,7 +526,7 @@ section[data-testid="stSidebar"] {{
     text-align: center;
     font-size: 18px;
     font-weight: 800;
-    margin-bottom: 12px;
+    margin-bottom: 0;
 }}
 
 label {{
@@ -605,7 +590,7 @@ input {{
     color:#D4AF37;
     font-size:15px;
     font-weight:600;
-    margin-top:30px;
+    margin-top:12px;
 }}
 
 .desktop-only {{
@@ -627,11 +612,14 @@ input {{
         display: none !important;
     }}
     .block-container {{
-        padding-top: 0.7rem !important;
-        padding-bottom: 1rem !important;
+        padding-top: 0.3rem !important;
+        padding-bottom: 0.5rem !important;
         padding-right: 0.7rem !important;
         padding-left: 0.7rem !important;
         max-width: 100% !important;
+    }}
+    .logo-wrap {{
+        margin-bottom: -2px !important;
     }}
     .logo-wrap img {{
         width: 165px !important;
@@ -640,6 +628,7 @@ input {{
     .hero-box {{
         padding: 18px 14px !important;
         border-radius: 22px !important;
+        margin-bottom: 8px !important;
     }}
     .hero-title {{
         font-size: 28px !important;
@@ -816,24 +805,43 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    # الوصول السريع - كمبيوتر فقط
-    st.markdown(f"""
-    <div class="desktop-quick-wrap">
-        <div class="desktop-quick-box">
-            <div class="desktop-quick-title">{t('quick_access')}</div>
-            <div class="desktop-quick-links">
-                <a href="/Match_Details">{t('go_matches')}</a>
-                <a href="/Booking">{t('go_booking')}</a>
-                <a href="/History">{t('go_history')}</a>
-                <a href="/Analytics">{t('go_analytics')}</a>
-                <a href="/Admin">{t('go_admin')}</a>
-                <a href="/Support">{t('go_support')}</a>
+    # =========================
+    # التنقل - كمبيوتر فقط
+    # =========================
+    if not is_mobile:
+        st.markdown(f"""
+        <div class="desktop-quick-wrap">
+            <div class="desktop-quick-box">
+                <div class="desktop-quick-title">{t('quick_access')}</div>
             </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
-    st.write("")
+        c1, c2, c3, c4, c5, c6 = st.columns(6)
+
+        with c1:
+            if st.button(t("go_matches"), key="d1", use_container_width=True):
+                st.switch_page("pages/0_Match_Details.py")
+
+        with c2:
+            if st.button(t("go_booking"), key="d2", use_container_width=True):
+                st.switch_page("pages/1_Booking.py")
+
+        with c3:
+            if st.button(t("go_history"), key="d3", use_container_width=True):
+                st.switch_page("pages/2_History.py")
+
+        with c4:
+            if st.button(t("go_analytics"), key="d4", use_container_width=True):
+                st.switch_page("pages/3_Analytics.py")
+
+        with c5:
+            if st.button(t("go_admin"), key="d5", use_container_width=True):
+                st.switch_page("pages/4_Admin.py")
+
+        with c6:
+            if st.button(t("go_support"), key="d6", use_container_width=True):
+                st.switch_page("pages/5_Support.py")
 
     # ترتيب الكمبيوتر
     desktop_row1_col1, desktop_row1_col2 = st.columns(2, gap="large")
@@ -852,8 +860,6 @@ else:
             <div class="card-text">{t('system_features_text')}</div>
         </div>
         """, unsafe_allow_html=True)
-
-    st.write("")
 
     desktop_row2_col1, desktop_row2_col2 = st.columns(2, gap="large")
     with desktop_row2_col1:
@@ -885,8 +891,6 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    st.write("")
-
     st.markdown(f"""
     <div class="mobile-only">
         <div class="card">
@@ -896,8 +900,6 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    st.write("")
-
     st.markdown(f"""
     <div class="mobile-only">
         <div class="card">
@@ -906,8 +908,6 @@ else:
         </div>
     </div>
     """, unsafe_allow_html=True)
-
-    st.write("")
 
     st.markdown(f"""
     <div class="mobile-only">
@@ -921,9 +921,9 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    st.write("")
-
-    # الوصول السريع - هاتف فقط - آخر الصفحة - 3 سطور
+    # =========================
+    # التنقل - هاتف فقط
+    # =========================
     if is_mobile:
         st.markdown(
             f"""
