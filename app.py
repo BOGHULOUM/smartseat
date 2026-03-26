@@ -561,10 +561,7 @@ section[data-testid="stSidebar"] {{
     box-shadow: 0 0 18px rgba(212,175,55,0.22);
 }}
 
-.mobile-btn button {{
-    width: 100% !important;
-    display: block !important;
-}}
+
 label {{
     color: #E6C86E !important;
     font-weight: 700 !important;
