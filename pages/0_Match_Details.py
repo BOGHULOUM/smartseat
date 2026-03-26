@@ -48,6 +48,16 @@ if "user_name" not in st.session_state:
     st.session_state.user_name = ""
 
 # =========================
+# فحص هل الجهاز هاتف
+# =========================
+try:
+    user_agent = st.context.headers.get("User-Agent", "")
+except Exception:
+    user_agent = ""
+
+is_mobile = any(x in user_agent for x in ["Mobile", "Android", "iPhone"])
+
+# =========================
 # الترجمة
 # =========================
 TXT = {
@@ -68,9 +78,12 @@ TXT = {
         "book_now": "احجز الآن",
         "need_login": "يجب تسجيل الدخول أولاً للوصول إلى هذه الصفحة.",
         "back_home": "العودة للرئيسية",
-        "quick_access": "التنقل السريع",
+        "quick_access": "الوصول السريع",
         "home": "الرئيسية",
         "booking": "الحجز",
+        "history": "السجل",
+        "analytics": "التحليلات",
+        "admin": "الإدارة",
         "support": "الدعم",
         "footer": "SmartSeat Match Details • Final Year Project",
     },
@@ -94,6 +107,9 @@ TXT = {
         "quick_access": "Quick Access",
         "home": "Home",
         "booking": "Booking",
+        "history": "History",
+        "analytics": "Analytics",
+        "admin": "Admin",
         "support": "Support",
         "footer": "SmartSeat Match Details • Final Year Project",
     }
@@ -290,8 +306,8 @@ section[data-testid="stSidebar"] {{
 }}
 
 .block-container {{
-    padding-top: 1.1rem;
-    padding-bottom: 2rem;
+    padding-top: 0.45rem !important;
+    padding-bottom: 1rem !important;
     max-width: 1280px;
 }}
 
@@ -300,7 +316,7 @@ section[data-testid="stSidebar"] {{
     justify-content: center;
     align-items: center;
     margin-top: -4px;
-    margin-bottom: -10px;
+    margin-bottom: -6px;
 }}
 
 .logo-wrap img {{
@@ -319,7 +335,7 @@ section[data-testid="stSidebar"] {{
     text-align: center;
     box-shadow: 0 12px 30px rgba(0,0,0,0.36);
     margin-top: 0;
-    margin-bottom: 22px;
+    margin-bottom: 12px;
 }}
 
 .hero-title {{
@@ -423,41 +439,26 @@ label {{
     background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
 }}
 
-.mobile-nav-only {{
-    display:none;
+.mobile-only {{
+    display: none;
 }}
 
-.mobile-nav-box {{
+.quick-box {{
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(212,175,55,0.25);
-    border-radius: 22px;
-    padding: 14px 12px 6px 12px;
-    margin-bottom: 16px;
-}}
-
-.mobile-nav-title {{
-    color: #D4AF37;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 800;
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+    margin-top: 8px;
     margin-bottom: 10px;
 }}
 
-.mobile-links {{
-    display:flex;
-    gap:8px;
-    justify-content:center;
-    flex-wrap:wrap;
-}}
-
-.mobile-links a {{
-    text-decoration:none !important;
-    color:black !important;
-    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
-    padding:10px 14px;
-    border-radius:14px;
-    font-size:14px;
-    font-weight:800;
+.quick-title {{
+    color: #D4AF37;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 0;
 }}
 
 .footer {{
@@ -465,7 +466,7 @@ label {{
     color:#D4AF37;
     font-size:15px;
     font-weight:600;
-    margin-top:24px;
+    margin-top:16px;
 }}
 
 @media (max-width: 768px) {{
@@ -478,12 +479,12 @@ label {{
     button[kind="header"] {{
         display: none !important;
     }}
-    .mobile-nav-only {{
+    .mobile-only {{
         display:block !important;
     }}
     .block-container {{
-        padding-top: 0.7rem !important;
-        padding-bottom: 1rem !important;
+        padding-top: 0.3rem !important;
+        padding-bottom: 0.7rem !important;
         padding-right: 0.7rem !important;
         padding-left: 0.7rem !important;
         max-width: 100% !important;
@@ -495,7 +496,7 @@ label {{
     .hero-box {{
         padding: 18px 14px !important;
         border-radius: 22px !important;
-        margin-bottom: 16px !important;
+        margin-bottom: 10px !important;
     }}
     .hero-title {{
         font-size: 28px !important;
@@ -537,22 +538,6 @@ with st.sidebar:
         key="lang_match_sidebar"
     )
     st.session_state.lang = "ar" if lang_view == TXT["ar"]["arabic"] else "en"
-
-# =========================
-# تنقل الجوال
-# =========================
-st.markdown(f"""
-<div class="mobile-nav-only">
-    <div class="mobile-nav-box">
-        <div class="mobile-nav-title">{t('quick_access')}</div>
-        <div class="mobile-links">
-            <a href="/">{t('home')}</a>
-            <a href="/Booking">{t('booking')}</a>
-            <a href="/Support">{t('support')}</a>
-        </div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
 
 # =========================
 # أعلى الصفحة
@@ -627,6 +612,48 @@ for i, match in enumerate(matches):
             if st.button(f"{t('book_now')} - {name}", key=f"book_{i}"):
                 st.session_state["selected_match"] = match["name_ar"]
                 st.switch_page("pages/1_Booking.py")
+
+# =========================
+# التنقل - هاتف فقط - آخر الصفحة
+# =========================
+if is_mobile:
+    st.markdown(
+        f"""
+        <div class="mobile-only">
+            <div class="quick-box">
+                <div class="quick-title">{t('quick_access')}</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # صف 1
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('home'), key="m_home_0", use_container_width=True):
+            st.switch_page("app.py")
+    with col2:
+        if st.button(t('booking'), key="m_booking_0", use_container_width=True):
+            st.switch_page("pages/1_Booking.py")
+
+    # صف 2
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('history'), key="m_history_0", use_container_width=True):
+            st.switch_page("pages/2_History.py")
+    with col2:
+        if st.button(t('analytics'), key="m_analytics_0", use_container_width=True):
+            st.switch_page("pages/3_Analytics.py")
+
+    # صف 3
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('admin'), key="m_admin_0", use_container_width=True):
+            st.switch_page("pages/4_Admin.py")
+    with col2:
+        if st.button(t('support'), key="m_support_0", use_container_width=True):
+            st.switch_page("pages/5_Support.py")
 
 st.markdown(f'<div class="footer">{t("footer")}</div>', unsafe_allow_html=True)
 conn.close()
