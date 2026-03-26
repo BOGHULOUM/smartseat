@@ -19,6 +19,171 @@ st.set_page_config(
 )
 
 # =========================
+# Session State
+# =========================
+if "lang" not in st.session_state:
+    st.session_state.lang = "ar"
+
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if "user_name" not in st.session_state:
+    st.session_state.user_name = ""
+
+# =========================
+# فحص هل الجهاز هاتف
+# =========================
+try:
+    user_agent = st.context.headers.get("User-Agent", "")
+except Exception:
+    user_agent = ""
+
+is_mobile = any(x in user_agent for x in ["Mobile", "Android", "iPhone"])
+
+# =========================
+# الترجمة
+# =========================
+TXT = {
+    "ar": {
+        "lang_label": "Language/اللغة",
+        "arabic": "العربية",
+        "english": "English",
+
+        "need_login": "يجب تسجيل الدخول أولاً للوصول إلى هذه الصفحة.",
+        "back_home": "العودة للرئيسية",
+
+        "page_title": "التحليلات",
+        "page_subtitle": "Analytics Dashboard",
+        "page_desc": "من هذه الصفحة يمكنك متابعة الأداء العام للنظام، وتحليل الحجوزات، والإيرادات، وأنواع المقاعد، ومستوى الطلب بشكل واضح واحترافي.",
+
+        "sidebar_title": "التحليلات",
+        "sidebar_desc": "تابع الأداء العام، الإيرادات، الطلب، وأنواع المقاعد.",
+
+        "no_data": "لا توجد بيانات كافية لعرض التحليلات حالياً. قم بإضافة حجوزات أولاً.",
+
+        "metric_total_bookings": "إجمالي الحجوزات",
+        "metric_total_tickets": "إجمالي التذاكر",
+        "metric_total_revenue": "إجمالي الإيرادات (د.ك)",
+        "metric_avg_demand": "متوسط الطلب",
+
+        "best_match_title": "أفضل مباراة مبيعاً",
+        "best_seat_title": "أكثر نوع مقعد طلباً",
+        "best_payment_title": "أكثر طريقة دفع استخداماً",
+        "tickets_count": "بعدد تذاكر",
+        "operations_count": "بعدد عمليات",
+
+        "chart_match_tickets": "عدد التذاكر حسب المباراة",
+        "chart_match_revenue": "الإيرادات حسب المباراة",
+        "chart_seat_tickets": "عدد التذاكر حسب نوع المقعد",
+        "chart_payment_methods": "طرق الدفع الأكثر استخداماً",
+        "chart_avg_demand": "متوسط الطلب حسب المباراة",
+
+        "x_match": "المباراة",
+        "x_seat": "نوع المقعد",
+        "y_tickets": "عدد التذاكر",
+        "y_revenue": "الإيرادات",
+        "y_avg_demand": "متوسط الطلب",
+
+        "plot_bookings_by_match": "الحجوزات حسب المباراة",
+        "plot_revenue_by_match": "الإيرادات حسب المباراة",
+        "plot_top_seats": "المقاعد الأكثر طلباً",
+        "plot_payment_distribution": "توزيع طرق الدفع",
+        "plot_avg_demand": "متوسط مستوى الطلب",
+
+        "summary_table": "ملخص البيانات",
+
+        "home": "الرئيسية",
+        "matches": "المباريات",
+        "booking": "الحجز",
+        "history": "السجل",
+        "admin": "الإدارة",
+        "support": "الدعم",
+        "quick_access": "الوصول السريع",
+
+        "col_customer_name": "اسم العميل",
+        "col_match_name": "المباراة",
+        "col_seat_type": "نوع المقعد",
+        "col_seat_section": "القسم",
+        "col_ticket_count": "عدد التذاكر",
+        "col_demand_level": "مستوى الطلب",
+        "col_payment_method": "طريقة الدفع",
+        "col_final_price": "السعر النهائي",
+
+        "footer": "SmartSeat Analytics • Final Year Project"
+    },
+    "en": {
+        "lang_label": "Language",
+        "arabic": "العربية",
+        "english": "English",
+
+        "need_login": "You must login first to access this page.",
+        "back_home": "Back to Home",
+
+        "page_title": "Analytics",
+        "page_subtitle": "Analytics Dashboard",
+        "page_desc": "From this page, you can monitor the overall system performance and analyze bookings, revenue, seat types, and demand level in a clear and professional way.",
+
+        "sidebar_title": "Analytics",
+        "sidebar_desc": "Track overall performance, revenue, demand, and seat types.",
+
+        "no_data": "There is not enough data to display analytics right now. Please add bookings first.",
+
+        "metric_total_bookings": "Total Bookings",
+        "metric_total_tickets": "Total Tickets",
+        "metric_total_revenue": "Total Revenue (KD)",
+        "metric_avg_demand": "Average Demand",
+
+        "best_match_title": "Best-Selling Match",
+        "best_seat_title": "Most Requested Seat Type",
+        "best_payment_title": "Most Used Payment Method",
+        "tickets_count": "Tickets Count",
+        "operations_count": "Operations Count",
+
+        "chart_match_tickets": "Tickets by Match",
+        "chart_match_revenue": "Revenue by Match",
+        "chart_seat_tickets": "Tickets by Seat Type",
+        "chart_payment_methods": "Most Used Payment Methods",
+        "chart_avg_demand": "Average Demand by Match",
+
+        "x_match": "Match",
+        "x_seat": "Seat Type",
+        "y_tickets": "Tickets",
+        "y_revenue": "Revenue",
+        "y_avg_demand": "Average Demand",
+
+        "plot_bookings_by_match": "Bookings by Match",
+        "plot_revenue_by_match": "Revenue by Match",
+        "plot_top_seats": "Most Requested Seats",
+        "plot_payment_distribution": "Payment Methods Distribution",
+        "plot_avg_demand": "Average Demand Level",
+
+        "summary_table": "Data Summary",
+
+        "home": "Home",
+        "matches": "Matches",
+        "booking": "Booking",
+        "history": "History",
+        "admin": "Admin",
+        "support": "Support",
+        "quick_access": "Quick Access",
+
+        "col_customer_name": "Customer Name",
+        "col_match_name": "Match",
+        "col_seat_type": "Seat Type",
+        "col_seat_section": "Section",
+        "col_ticket_count": "Ticket Count",
+        "col_demand_level": "Demand Level",
+        "col_payment_method": "Payment Method",
+        "col_final_price": "Final Price",
+
+        "footer": "SmartSeat Analytics • Final Year Project"
+    }
+}
+
+def t(k):
+    return TXT[st.session_state.lang][k]
+
+# =========================
 # اللوقو
 # =========================
 def get_base64(img_path):
@@ -26,6 +191,15 @@ def get_base64(img_path):
         return base64.b64encode(f.read()).decode()
 
 logo_base64 = get_base64(logo_path)
+
+# =========================
+# حماية الصفحة
+# =========================
+if not st.session_state.logged_in:
+    st.warning(t("need_login"))
+    if st.button(t("back_home")):
+        st.switch_page("app.py")
+    st.stop()
 
 # =========================
 # التصميم
@@ -45,7 +219,6 @@ html, body, [class*="css"] {{
     color: white;
 }}
 
-/* سايدبار الكمبيوتر */
 section[data-testid="stSidebar"] {{
     background: linear-gradient(180deg, #0b0b0b 0%, #151515 100%);
     border-left: 1px solid rgba(212,175,55,0.20);
@@ -111,8 +284,8 @@ section[data-testid="stSidebar"] {{
 }}
 
 .block-container {{
-    padding-top: 1.2rem;
-    padding-bottom: 2rem;
+    padding-top: 0.45rem !important;
+    padding-bottom: 1rem !important;
     max-width: 1250px;
 }}
 
@@ -120,12 +293,12 @@ section[data-testid="stSidebar"] {{
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: -5px;
-    margin-bottom: -16px;
+    margin-top: -4px;
+    margin-bottom: -8px;
 }}
 
 .logo-wrap img {{
-    width: 240px;
+    width: 220px;
     max-width: 100%;
     filter: drop-shadow(0px 0px 20px rgba(212,175,55,0.68));
 }}
@@ -139,8 +312,8 @@ section[data-testid="stSidebar"] {{
     padding: 24px 30px;
     text-align: center;
     box-shadow: 0 12px 30px rgba(0,0,0,0.35);
-    margin-top: 0px;
-    margin-bottom: 22px;
+    margin-top: 0;
+    margin-bottom: 12px;
 }}
 
 .hero-title {{
@@ -235,47 +408,26 @@ section[data-testid="stSidebar"] {{
     word-break: break-word;
 }}
 
-.mobile-nav-only {{
-    display: none;
-}}
-
-.mobile-nav-box {{
+.quick-box {{
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(212,175,55,0.25);
-    border-radius: 22px;
-    padding: 14px 12px 6px 12px;
-    margin-bottom: 16px;
-}}
-
-.mobile-nav-title {{
-    color: #D4AF37;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 800;
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+    margin-top: 10px;
     margin-bottom: 10px;
 }}
 
-.mobile-links {{
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
-}}
-
-.mobile-links a {{
-    text-decoration: none !important;
-    color: black !important;
-    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
-    padding: 10px 14px;
-    border-radius: 14px;
-    font-size: 14px;
+.quick-title {{
+    color: #D4AF37;
+    text-align: center;
+    font-size: 18px;
     font-weight: 800;
-    display: inline-block;
-    box-shadow: 0 0 14px rgba(212,175,55,0.20);
+    margin-bottom: 0;
 }}
 
-.mobile-links a:hover {{
-    transform: translateY(-2px);
+.mobile-only {{
+    display: none;
 }}
 
 .warning-box {{
@@ -306,16 +458,34 @@ div[data-testid="stDataFrame"] {{
     overflow: hidden;
 }}
 
+.stButton > button {{
+    width: 100%;
+    min-height: 56px;
+    border: none;
+    border-radius: 18px;
+    padding: 12px 18px;
+    font-size: 18px;
+    font-weight: 800;
+    color: black;
+    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
+    box-shadow: 0 0 18px rgba(212,175,55,0.22);
+    transition: all 0.25s ease;
+}}
+
+.stButton > button:hover {{
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 0 24px rgba(212,175,55,0.36);
+}}
+
 .footer {{
     text-align: center;
     color: #D4AF37;
     font-size: 15px;
     font-weight: 600;
-    margin-top: 24px;
+    margin-top: 16px;
     opacity: 0.95;
 }}
 
-/* الجوال فقط */
 @media (max-width: 768px) {{
     section[data-testid="stSidebar"] {{
         display: none !important;
@@ -329,13 +499,13 @@ div[data-testid="stDataFrame"] {{
         display: none !important;
     }}
 
-    .mobile-nav-only {{
+    .mobile-only {{
         display: block !important;
     }}
 
     .block-container {{
-        padding-top: 0.7rem !important;
-        padding-bottom: 1rem !important;
+        padding-top: 0.3rem !important;
+        padding-bottom: 0.7rem !important;
         padding-right: 0.7rem !important;
         padding-left: 0.7rem !important;
         max-width: 100% !important;
@@ -343,7 +513,7 @@ div[data-testid="stDataFrame"] {{
 
     .logo-wrap {{
         margin-top: 0 !important;
-        margin-bottom: -6px !important;
+        margin-bottom: -4px !important;
     }}
 
     .logo-wrap img {{
@@ -354,7 +524,7 @@ div[data-testid="stDataFrame"] {{
     .hero-box {{
         padding: 18px 14px !important;
         border-radius: 22px !important;
-        margin-bottom: 16px !important;
+        margin-bottom: 10px !important;
     }}
 
     .hero-title {{
@@ -400,7 +570,7 @@ div[data-testid="stDataFrame"] {{
 
     .footer {{
         font-size: 13px !important;
-        margin-top: 16px !important;
+        margin-top: 14px !important;
     }}
 }}
 </style>
@@ -424,36 +594,40 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
+    lang_view = st.selectbox(
+        t("lang_label"),
+        [TXT["ar"]["arabic"], TXT["en"]["english"]],
+        index=0 if st.session_state.lang == "ar" else 1,
+        key="analytics_lang_sidebar"
+    )
+    st.session_state.lang = "ar" if lang_view == TXT["ar"]["arabic"] else "en"
+
     st.markdown("---")
-    st.markdown("### التحليلات")
-    st.markdown("تابع الأداء العام، الإيرادات، الطلب، وأنواع المقاعد.")
+    st.markdown(f"### {t('sidebar_title')}")
+    st.markdown(t("sidebar_desc"))
 
 # =========================
-# تنقل الجوال فقط
+# أعلى الصفحة
 # =========================
-st.markdown("""
-<div class="mobile-nav-only">
-    <div class="mobile-nav-box">
-        <div class="mobile-nav-title">التنقل السريع</div>
-        <div class="mobile-links">
-            <a href="/">الرئيسية</a>
-            <a href="/History">السجل</a>
-            <a href="/Admin">الإدارة</a>
-        </div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+top_col1, top_col2 = st.columns([4, 1])
+with top_col2:
+    page_lang = st.selectbox(
+        t("lang_label"),
+        [TXT["ar"]["arabic"], TXT["en"]["english"]],
+        index=0 if st.session_state.lang == "ar" else 1,
+        key="analytics_lang_top"
+    )
+    st.session_state.lang = "ar" if page_lang == TXT["ar"]["arabic"] else "en"
 
 # =========================
 # الهيدر
 # =========================
-st.markdown("""
+st.markdown(f"""
 <div class="hero-box">
-    <div class="hero-title">التحليلات</div>
-    <div class="hero-subtitle">Analytics Dashboard</div>
+    <div class="hero-title">{t('page_title')}</div>
+    <div class="hero-subtitle">{t('page_subtitle')}</div>
     <div class="hero-text">
-        من هذه الصفحة يمكنك متابعة الأداء العام للنظام، وتحليل الحجوزات،
-        والإيرادات، وأنواع المقاعد، ومستوى الطلب بشكل واضح واحترافي.
+        {t('page_desc')}
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -487,7 +661,7 @@ conn.commit()
 df = pd.read_sql_query("SELECT * FROM bookings ORDER BY id DESC", conn)
 
 if df.empty:
-    st.markdown('<div class="warning-box">لا توجد بيانات كافية لعرض التحليلات حالياً. قم بإضافة حجوزات أولاً.</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="warning-box">{t("no_data")}</div>', unsafe_allow_html=True)
     conn.close()
     st.stop()
 
@@ -527,7 +701,7 @@ with m1:
     st.markdown(f"""
     <div class="metric-box">
         <div class="metric-number">{total_bookings}</div>
-        <div class="metric-label">إجمالي الحجوزات</div>
+        <div class="metric-label">{t('metric_total_bookings')}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -535,7 +709,7 @@ with m2:
     st.markdown(f"""
     <div class="metric-box">
         <div class="metric-number">{total_tickets}</div>
-        <div class="metric-label">إجمالي التذاكر</div>
+        <div class="metric-label">{t('metric_total_tickets')}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -543,7 +717,7 @@ with m3:
     st.markdown(f"""
     <div class="metric-box">
         <div class="metric-number">{total_revenue}</div>
-        <div class="metric-label">إجمالي الإيرادات (د.ك)</div>
+        <div class="metric-label">{t('metric_total_revenue')}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -551,11 +725,9 @@ with m4:
     st.markdown(f"""
     <div class="metric-box">
         <div class="metric-number">{avg_demand}/10</div>
-        <div class="metric-label">متوسط الطلب</div>
+        <div class="metric-label">{t('metric_avg_demand')}</div>
     </div>
     """, unsafe_allow_html=True)
-
-st.write("")
 
 # =========================
 # بطاقات ذكية
@@ -565,27 +737,27 @@ c1, c2, c3 = st.columns(3)
 with c1:
     st.markdown(f"""
     <div class="insight-card">
-        <div class="insight-title">أفضل مباراة مبيعاً</div>
+        <div class="insight-title">{t('best_match_title')}</div>
         <div class="insight-line"><b>{best_match_name}</b></div>
-        <div class="insight-line">بعدد تذاكر: <b>{best_match_tickets}</b></div>
+        <div class="insight-line">{t('tickets_count')}: <b>{best_match_tickets}</b></div>
     </div>
     """, unsafe_allow_html=True)
 
 with c2:
     st.markdown(f"""
     <div class="insight-card">
-        <div class="insight-title">أكثر نوع مقعد طلباً</div>
+        <div class="insight-title">{t('best_seat_title')}</div>
         <div class="insight-line"><b>{best_seat_name}</b></div>
-        <div class="insight-line">بعدد تذاكر: <b>{best_seat_tickets}</b></div>
+        <div class="insight-line">{t('tickets_count')}: <b>{best_seat_tickets}</b></div>
     </div>
     """, unsafe_allow_html=True)
 
 with c3:
     st.markdown(f"""
     <div class="insight-card">
-        <div class="insight-title">أكثر طريقة دفع استخداماً</div>
+        <div class="insight-title">{t('best_payment_title')}</div>
         <div class="insight-line"><b>{best_payment_name}</b></div>
-        <div class="insight-line">بعدد عمليات: <b>{best_payment_count}</b></div>
+        <div class="insight-line">{t('operations_count')}: <b>{best_payment_count}</b></div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -595,63 +767,68 @@ with c3:
 chart1, chart2 = st.columns(2)
 
 with chart1:
-    st.markdown('<div class="section-title">عدد التذاكر حسب المباراة</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-title">{t("chart_match_tickets")}</div>', unsafe_allow_html=True)
     fig1, ax1 = plt.subplots(figsize=(8, 4.5))
     ax1.bar(top_match.index, top_match.values)
-    ax1.set_xlabel("المباراة")
-    ax1.set_ylabel("عدد التذاكر")
-    ax1.set_title("الحجوزات حسب المباراة")
+    ax1.set_xlabel(t("x_match"))
+    ax1.set_ylabel(t("y_tickets"))
+    ax1.set_title(t("plot_bookings_by_match"))
     plt.xticks(rotation=20, ha="right")
     plt.tight_layout()
     st.pyplot(fig1)
+    plt.close(fig1)
 
 with chart2:
-    st.markdown('<div class="section-title">الإيرادات حسب المباراة</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-title">{t("chart_match_revenue")}</div>', unsafe_allow_html=True)
     fig2, ax2 = plt.subplots(figsize=(8, 4.5))
     ax2.bar(revenue_by_match.index, revenue_by_match.values)
-    ax2.set_xlabel("المباراة")
-    ax2.set_ylabel("الإيرادات")
-    ax2.set_title("الإيرادات حسب المباراة")
+    ax2.set_xlabel(t("x_match"))
+    ax2.set_ylabel(t("y_revenue"))
+    ax2.set_title(t("plot_revenue_by_match"))
     plt.xticks(rotation=20, ha="right")
     plt.tight_layout()
     st.pyplot(fig2)
+    plt.close(fig2)
 
 chart3, chart4 = st.columns(2)
 
 with chart3:
-    st.markdown('<div class="section-title">عدد التذاكر حسب نوع المقعد</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-title">{t("chart_seat_tickets")}</div>', unsafe_allow_html=True)
     fig3, ax3 = plt.subplots(figsize=(8, 4.5))
     ax3.bar(top_seat.index, top_seat.values)
-    ax3.set_xlabel("نوع المقعد")
-    ax3.set_ylabel("عدد التذاكر")
-    ax3.set_title("المقاعد الأكثر طلباً")
+    ax3.set_xlabel(t("x_seat"))
+    ax3.set_ylabel(t("y_tickets"))
+    ax3.set_title(t("plot_top_seats"))
     plt.tight_layout()
     st.pyplot(fig3)
+    plt.close(fig3)
 
 with chart4:
-    st.markdown('<div class="section-title">طرق الدفع الأكثر استخداماً</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-title">{t("chart_payment_methods")}</div>', unsafe_allow_html=True)
     fig4, ax4 = plt.subplots(figsize=(8, 4.5))
     ax4.pie(payment_stats.values, labels=payment_stats.index, autopct="%1.1f%%")
-    ax4.set_title("توزيع طرق الدفع")
+    ax4.set_title(t("plot_payment_distribution"))
     plt.tight_layout()
     st.pyplot(fig4)
+    plt.close(fig4)
 
 with st.container(border=True):
-    st.markdown('<div class="section-title">متوسط الطلب حسب المباراة</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-title">{t("chart_avg_demand")}</div>', unsafe_allow_html=True)
     fig5, ax5 = plt.subplots(figsize=(10, 4.8))
     ax5.plot(demand_by_match.index, demand_by_match.values, marker="o")
-    ax5.set_xlabel("المباراة")
-    ax5.set_ylabel("متوسط الطلب")
-    ax5.set_title("متوسط مستوى الطلب")
+    ax5.set_xlabel(t("x_match"))
+    ax5.set_ylabel(t("y_avg_demand"))
+    ax5.set_title(t("plot_avg_demand"))
     plt.xticks(rotation=20, ha="right")
     plt.tight_layout()
     st.pyplot(fig5)
+    plt.close(fig5)
 
 # =========================
 # الجدول
 # =========================
 with st.container(border=True):
-    st.markdown('<div class="section-title">ملخص البيانات</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-title">{t("summary_table")}</div>', unsafe_allow_html=True)
 
     summary_df = df[[
         "customer_name",
@@ -665,24 +842,66 @@ with st.container(border=True):
     ]].copy()
 
     summary_df = summary_df.rename(columns={
-        "customer_name": "اسم العميل",
-        "match_name": "المباراة",
-        "seat_type": "نوع المقعد",
-        "seat_section": "القسم",
-        "ticket_count": "عدد التذاكر",
-        "demand_level": "مستوى الطلب",
-        "payment_method": "طريقة الدفع",
-        "final_price": "السعر النهائي"
+        "customer_name": t("col_customer_name"),
+        "match_name": t("col_match_name"),
+        "seat_type": t("col_seat_type"),
+        "seat_section": t("col_seat_section"),
+        "ticket_count": t("col_ticket_count"),
+        "demand_level": t("col_demand_level"),
+        "payment_method": t("col_payment_method"),
+        "final_price": t("col_final_price")
     })
 
     st.dataframe(summary_df, use_container_width=True)
 
 # =========================
+# التنقل - هاتف فقط - آخر الصفحة
+# =========================
+if is_mobile:
+    st.markdown(
+        f"""
+        <div class="mobile-only">
+            <div class="quick-box">
+                <div class="quick-title">{t('quick_access')}</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # صف 1
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('home'), key="m_home_3", use_container_width=True):
+            st.switch_page("app.py")
+    with col2:
+        if st.button(t('matches'), key="m_matches_3", use_container_width=True):
+            st.switch_page("pages/0_Match_Details.py")
+
+    # صف 2
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('booking'), key="m_booking_3", use_container_width=True):
+            st.switch_page("pages/1_Booking.py")
+    with col2:
+        if st.button(t('history'), key="m_history_3", use_container_width=True):
+            st.switch_page("pages/2_History.py")
+
+    # صف 3
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('admin'), key="m_admin_3", use_container_width=True):
+            st.switch_page("pages/4_Admin.py")
+    with col2:
+        if st.button(t('support'), key="m_support_3", use_container_width=True):
+            st.switch_page("pages/5_Support.py")
+
+# =========================
 # الفوتر
 # =========================
-st.markdown("""
+st.markdown(f"""
 <div class="footer">
-    SmartSeat Analytics • Final Year Project
+    {t("footer")}
 </div>
 """, unsafe_allow_html=True)
 
