@@ -25,6 +25,167 @@ st.set_page_config(
 )
 
 # =========================
+# Session State
+# =========================
+if "lang" not in st.session_state:
+    st.session_state.lang = "ar"
+
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if "user_name" not in st.session_state:
+    st.session_state.user_name = ""
+
+# =========================
+# فحص هل الجهاز هاتف
+# =========================
+try:
+    user_agent = st.context.headers.get("User-Agent", "")
+except Exception:
+    user_agent = ""
+
+is_mobile = any(x in user_agent for x in ["Mobile", "Android", "iPhone"])
+
+# =========================
+# الترجمة
+# =========================
+TXT = {
+    "ar": {
+        "lang_label": "Language/اللغة",
+        "arabic": "العربية",
+        "english": "English",
+
+        "page_title": "حجز التذاكر",
+        "page_subtitle": "Smart Booking Experience",
+        "page_desc": "أدخل بيانات الحجز وسيتم حساب السعر النهائي بشكل مباشر حسب المباراة، نوع المقعد، عدد التذاكر، مستوى الطلب، وكود الخصم إن وجد.",
+
+        "need_login": "يجب تسجيل الدخول أولاً للوصول إلى هذه الصفحة.",
+        "back_home": "العودة للرئيسية",
+
+        "booking_section": "بيانات الحجز",
+        "summary_section": "ملخص الحجز",
+
+        "customer_name": "اسم العميل",
+        "phone": "رقم الهاتف",
+        "booking_date": "اختيار التاريخ",
+        "ticket_count": "عدد التذاكر",
+        "match_name": "اختيار المباراة",
+        "seat_type": "نوع المقعد",
+        "seat_section": "اختيار المقعد",
+        "demand_level": "مستوى الطلب",
+        "payment_method": "طريقة الدفع",
+        "discount_code": "كود الخصم",
+        "discount_placeholder": "مثال: KTECH10",
+
+        "final_price": "السعر النهائي",
+        "before_discount": "الإجمالي قبل الخصم",
+        "discount_value": "قيمة الخصم",
+
+        "confirm_booking": "✅ تأكيد الحجز الآن",
+        "processing": "جاري تأكيد الحجز وتجهيز التذكرة...",
+
+        "name_error": "يرجى إدخال اسم العميل.",
+        "phone_error": "يرجى إدخال رقم الهاتف.",
+
+        "success": "🎉 تم تأكيد الحجز بنجاح!",
+        "customer": "العميل",
+        "match": "المباراة",
+        "seat": "المقعد",
+        "payment": "الدفع",
+        "booking_number": "رقم الحجز",
+
+        "download_pdf": "📄 تحميل التذكرة PDF",
+        "qr_title": "🎟️ رمز التذكرة (QR Code)",
+        "qr_caption": "اعرض هذا الرمز عند الدخول",
+        "download_qr": "📥 تحميل QR كصورة",
+
+        "no_discount": "لا يوجد",
+
+        "regular": "عادي",
+        "premium": "مميز",
+        "vip": "VIP",
+
+        "home": "الرئيسية",
+        "matches": "المباريات",
+        "history": "السجل",
+        "analytics": "التحليلات",
+        "admin": "الإدارة",
+        "support": "الدعم",
+        "quick_access": "الوصول السريع",
+
+        "footer": "SmartSeat Booking • Final Year Project"
+    },
+    "en": {
+        "lang_label": "Language",
+        "arabic": "العربية",
+        "english": "English",
+
+        "page_title": "Ticket Booking",
+        "page_subtitle": "Smart Booking Experience",
+        "page_desc": "Enter your booking details and the final ticket price will be calculated instantly based on the match, seat type, number of tickets, demand level, and discount code if available.",
+
+        "need_login": "You must login first to access this page.",
+        "back_home": "Back to Home",
+
+        "booking_section": "Booking Details",
+        "summary_section": "Booking Summary",
+
+        "customer_name": "Customer Name",
+        "phone": "Phone Number",
+        "booking_date": "Select Date",
+        "ticket_count": "Ticket Count",
+        "match_name": "Choose Match",
+        "seat_type": "Seat Type",
+        "seat_section": "Choose Section",
+        "demand_level": "Demand Level",
+        "payment_method": "Payment Method",
+        "discount_code": "Discount Code",
+        "discount_placeholder": "Example: KTECH10",
+
+        "final_price": "Final Price",
+        "before_discount": "Total Before Discount",
+        "discount_value": "Discount Value",
+
+        "confirm_booking": "✅ Confirm Booking Now",
+        "processing": "Confirming booking and preparing ticket...",
+
+        "name_error": "Please enter the customer name.",
+        "phone_error": "Please enter the phone number.",
+
+        "success": "🎉 Booking confirmed successfully!",
+        "customer": "Customer",
+        "match": "Match",
+        "seat": "Seat",
+        "payment": "Payment",
+        "booking_number": "Booking Number",
+
+        "download_pdf": "📄 Download Ticket PDF",
+        "qr_title": "🎟️ Ticket QR Code",
+        "qr_caption": "Show this code at entry",
+        "download_qr": "📥 Download QR Image",
+
+        "no_discount": "None",
+
+        "regular": "Regular",
+        "premium": "Premium",
+        "vip": "VIP",
+
+        "home": "Home",
+        "matches": "Matches",
+        "history": "History",
+        "analytics": "Analytics",
+        "admin": "Admin",
+        "support": "Support",
+        "quick_access": "Quick Access",
+
+        "footer": "SmartSeat Booking • Final Year Project"
+    }
+}
+
+def t(key):
+    return TXT[st.session_state.lang][key]
+
+# =========================
 # قاعدة البيانات
 # =========================
 conn = sqlite3.connect(db_path, check_same_thread=False)
@@ -120,6 +281,15 @@ def get_base64(img_path):
 logo_base64 = get_base64(logo_path)
 
 # =========================
+# حماية الصفحة
+# =========================
+if not st.session_state.logged_in:
+    st.warning(t("need_login"))
+    if st.button(t("back_home")):
+        st.switch_page("app.py")
+    st.stop()
+
+# =========================
 # التصميم
 # =========================
 st.markdown(f"""
@@ -151,7 +321,6 @@ html, body, [class*="css"] {{
     color: white;
 }}
 
-/* سايدبار الكمبيوتر */
 section[data-testid="stSidebar"] {{
     background: linear-gradient(180deg, #0b0b0b 0%, #151515 100%);
     border-left: 1px solid rgba(212,175,55,0.20);
@@ -217,8 +386,8 @@ section[data-testid="stSidebar"] {{
 }}
 
 .block-container {{
-    padding-top: 1.2rem;
-    padding-bottom: 2rem;
+    padding-top: 0.45rem !important;
+    padding-bottom: 1rem !important;
     max-width: 1150px;
 }}
 
@@ -226,12 +395,12 @@ section[data-testid="stSidebar"] {{
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: -5px;
-    margin-bottom: -16px;
+    margin-top: -4px;
+    margin-bottom: -8px;
 }}
 
 .logo-wrap img {{
-    width: 260px;
+    width: 240px;
     max-width: 100%;
     filter: drop-shadow(0px 0px 20px rgba(212,175,55,0.68));
 }}
@@ -243,8 +412,8 @@ section[data-testid="stSidebar"] {{
     padding: 24px 30px;
     text-align: center;
     box-shadow: 0 12px 30px rgba(0,0,0,0.42);
-    margin-top: 0px;
-    margin-bottom: 22px;
+    margin-top: 0;
+    margin-bottom: 12px;
 }}
 
 .hero-title {{
@@ -328,47 +497,26 @@ section[data-testid="stSidebar"] {{
     margin-top: 8px;
 }}
 
-.mobile-nav-only {{
-    display: none;
-}}
-
-.mobile-nav-box {{
+.quick-box {{
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(212,175,55,0.25);
-    border-radius: 22px;
-    padding: 14px 12px 6px 12px;
-    margin-bottom: 16px;
-}}
-
-.mobile-nav-title {{
-    color: #D4AF37;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 800;
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+    margin-top: 10px;
     margin-bottom: 10px;
 }}
 
-.mobile-links {{
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
-}}
-
-.mobile-links a {{
-    text-decoration: none !important;
-    color: black !important;
-    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
-    padding: 10px 14px;
-    border-radius: 14px;
-    font-size: 14px;
+.quick-title {{
+    color: #D4AF37;
+    text-align: center;
+    font-size: 18px;
     font-weight: 800;
-    display: inline-block;
-    box-shadow: 0 0 14px rgba(212,175,55,0.20);
+    margin-bottom: 0;
 }}
 
-.mobile-links a:hover {{
-    transform: translateY(-2px);
+.mobile-only {{
+    display: none;
 }}
 
 label {{
@@ -455,11 +603,10 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     color: #D4AF37;
     font-size: 15px;
     font-weight: 600;
-    margin-top: 24px;
+    margin-top: 16px;
     opacity: 0.95;
 }}
 
-/* الجوال فقط */
 @media (max-width: 768px) {{
     section[data-testid="stSidebar"] {{
         display: none !important;
@@ -473,13 +620,13 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
         display: none !important;
     }}
 
-    .mobile-nav-only {{
+    .mobile-only {{
         display: block !important;
     }}
 
     .block-container {{
-        padding-top: 0.7rem !important;
-        padding-bottom: 1rem !important;
+        padding-top: 0.3rem !important;
+        padding-bottom: 0.7rem !important;
         padding-right: 0.7rem !important;
         padding-left: 0.7rem !important;
         max-width: 100% !important;
@@ -487,7 +634,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 
     .logo-wrap {{
         margin-top: 0 !important;
-        margin-bottom: -6px !important;
+        margin-bottom: -4px !important;
     }}
 
     .logo-wrap img {{
@@ -498,7 +645,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     .hero-box {{
         padding: 18px 14px !important;
         border-radius: 22px !important;
-        margin-bottom: 16px !important;
+        margin-bottom: 10px !important;
     }}
 
     .hero-title {{
@@ -559,7 +706,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 
     .footer {{
         font-size: 13px !important;
-        margin-top: 16px !important;
+        margin-top: 14px !important;
     }}
 }}
 </style>
@@ -583,36 +730,36 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("---")
-    st.markdown("### صفحة الحجز")
-    st.markdown("أدخل بيانات الحجز وسيتم احتساب السعر النهائي بشكل مباشر.")
+    lang_view = st.selectbox(
+        t("lang_label"),
+        [TXT["ar"]["arabic"], TXT["en"]["english"]],
+        index=0 if st.session_state.lang == "ar" else 1,
+        key="booking_lang_sidebar"
+    )
+    st.session_state.lang = "ar" if lang_view == TXT["ar"]["arabic"] else "en"
 
 # =========================
-# تنقل الجوال فقط
+# أعلى الصفحة
 # =========================
-st.markdown("""
-<div class="mobile-nav-only">
-    <div class="mobile-nav-box">
-        <div class="mobile-nav-title">التنقل السريع</div>
-        <div class="mobile-links">
-            <a href="/">الرئيسية</a>
-            <a href="/Match_Details">المباريات</a>
-            <a href="/Support">الدعم</a>
-        </div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+top_col1, top_col2 = st.columns([4, 1])
+with top_col2:
+    page_lang = st.selectbox(
+        t("lang_label"),
+        [TXT["ar"]["arabic"], TXT["en"]["english"]],
+        index=0 if st.session_state.lang == "ar" else 1,
+        key="booking_lang_top"
+    )
+    st.session_state.lang = "ar" if page_lang == TXT["ar"]["arabic"] else "en"
 
 # =========================
 # الهيدر
 # =========================
-st.markdown("""
+st.markdown(f"""
 <div class="hero-box">
-    <div class="hero-title">حجز التذاكر</div>
-    <div class="hero-subtitle">Smart Booking Experience</div>
+    <div class="hero-title">{t("page_title")}</div>
+    <div class="hero-subtitle">{t("page_subtitle")}</div>
     <div class="hero-text">
-        أدخل بيانات الحجز وسيتم حساب السعر النهائي بشكل مباشر حسب المباراة، نوع المقعد،
-        عدد التذاكر، مستوى الطلب، وكود الخصم إن وجد.
+        {t("page_desc")}
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -628,6 +775,14 @@ discount_codes = {
     "SMART15": 0.15,
     "VIP20": 0.20
 }
+
+def seat_type_label(value):
+    mapping = {
+        "Regular": t("regular"),
+        "Premium": t("premium"),
+        "VIP": t("vip")
+    }
+    return mapping.get(value, value)
 
 def calculate_price(match_name, seat_type, seat_section, ticket_count, demand_level, discount_code):
     base_price = pricing[match_name]
@@ -729,38 +884,38 @@ if "selected_match" in st.session_state:
 # بيانات الحجز
 # =========================
 with st.container(border=True):
-    st.markdown('<div class="section-title">بيانات الحجز</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-title">{t("booking_section")}</div>', unsafe_allow_html=True)
     st.markdown("<hr>", unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
     with c1:
-        customer_name = st.text_input("اسم العميل")
+        customer_name = st.text_input(t("customer_name"))
     with c2:
-        phone = st.text_input("رقم الهاتف")
+        phone = st.text_input(t("phone"))
 
     c3, c4 = st.columns(2)
     with c3:
-        booking_date = st.date_input("اختيار التاريخ", value=date.today(), min_value=date.today())
+        booking_date = st.date_input(t("booking_date"), value=date.today(), min_value=date.today())
     with c4:
-        ticket_count = st.number_input("عدد التذاكر", min_value=1, max_value=10, value=1, step=1)
+        ticket_count = st.number_input(t("ticket_count"), min_value=1, max_value=10, value=1, step=1)
 
     c5, c6 = st.columns(2)
     with c5:
-        match_name = st.selectbox("اختيار المباراة", match_options, index=default_index)
+        match_name = st.selectbox(t("match_name"), match_options, index=default_index)
     with c6:
-        seat_type = st.selectbox("نوع المقعد", list(seat_prices.keys()))
+        seat_type = st.selectbox(t("seat_type"), list(seat_prices.keys()), format_func=seat_type_label)
 
     c7, c8 = st.columns(2)
     with c7:
-        seat_section = st.selectbox("اختيار المقعد", list(section_prices.keys()))
+        seat_section = st.selectbox(t("seat_section"), list(section_prices.keys()))
     with c8:
-        demand_level = st.slider("مستوى الطلب", min_value=1, max_value=10, value=5)
+        demand_level = st.slider(t("demand_level"), min_value=1, max_value=10, value=5)
 
     c9, c10 = st.columns(2)
     with c9:
-        payment_method = st.selectbox("طريقة الدفع", payment_methods)
+        payment_method = st.selectbox(t("payment_method"), payment_methods)
     with c10:
-        discount_code = st.text_input("كود الخصم", placeholder="مثال: KTECH10")
+        discount_code = st.text_input(t("discount_code"), placeholder=t("discount_placeholder"))
 
 # =========================
 # حساب السعر
@@ -778,53 +933,53 @@ base_price, final_price, discount_value, subtotal = calculate_price(
 # ملخص الحجز
 # =========================
 with st.container(border=True):
-    st.markdown('<div class="section-title">ملخص الحجز</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-title">{t("summary_section")}</div>', unsafe_allow_html=True)
     st.markdown("<hr>", unsafe_allow_html=True)
 
     s1, s2 = st.columns(2)
 
     with s1:
-        st.markdown(f'<div class="summary-line"><b>اسم العميل:</b> {customer_name if customer_name else "-"}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>رقم الهاتف:</b> {phone if phone else "-"}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>التاريخ:</b> {booking_date}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>المباراة:</b> {match_name}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>نوع المقعد:</b> {seat_type}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="summary-line"><b>{t("customer_name")}:</b> {customer_name if customer_name else "-"}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="summary-line"><b>{t("phone")}:</b> {phone if phone else "-"}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="summary-line"><b>{t("booking_date")}:</b> {booking_date}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="summary-line"><b>{t("match_name")}:</b> {match_name}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="summary-line"><b>{t("seat_type")}:</b> {seat_type_label(seat_type)}</div>', unsafe_allow_html=True)
 
     with s2:
-        st.markdown(f'<div class="summary-line"><b>المقعد / القسم:</b> {seat_section}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>عدد التذاكر:</b> {ticket_count}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>مستوى الطلب:</b> {demand_level}/10</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>طريقة الدفع:</b> {payment_method}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="summary-line"><b>كود الخصم:</b> {discount_code if discount_code else "لا يوجد"}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="summary-line"><b>{t("seat_section")}:</b> {seat_section}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="summary-line"><b>{t("ticket_count")}:</b> {ticket_count}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="summary-line"><b>{t("demand_level")}:</b> {demand_level}/10</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="summary-line"><b>{t("payment_method")}:</b> {payment_method}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="summary-line"><b>{t("discount_code")}:</b> {discount_code if discount_code else t("no_discount")}</div>', unsafe_allow_html=True)
 
     st.markdown(f"""
     <div class="price-box">
-        <div class="price-label">السعر النهائي</div>
+        <div class="price-label">{t("final_price")}</div>
         <div class="price-number">{final_price} د.ك</div>
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown(
-        f'<div class="small-note">الإجمالي قبل الخصم: {subtotal} د.ك | قيمة الخصم: {discount_value} د.ك</div>',
+        f'<div class="small-note">{t("before_discount")}: {subtotal} د.ك | {t("discount_value")}: {discount_value} د.ك</div>',
         unsafe_allow_html=True
     )
 
 # =========================
 # التأكيد
 # =========================
-confirm = st.button("✅ تأكيد الحجز الآن")
+confirm = st.button(t("confirm_booking"))
 
 if confirm:
     phone_clean = phone.strip()
     discount_clean = discount_code.strip().upper()
 
     if customer_name.strip() == "":
-        st.error("يرجى إدخال اسم العميل.")
+        st.error(t("name_error"))
     elif phone_clean == "":
-        st.error("يرجى إدخال رقم الهاتف.")
+        st.error(t("phone_error"))
     else:
         progress_text = st.markdown(
-            "<div class='gold-center' style='font-size:18px; margin-top:10px;'>جاري تأكيد الحجز وتجهيز التذكرة...</div>",
+            f"<div class='gold-center' style='font-size:18px; margin-top:10px;'>{t('processing')}</div>",
             unsafe_allow_html=True
         )
         progress_bar = st.progress(0)
@@ -886,36 +1041,36 @@ if confirm:
 
         st.markdown(f"""
         <div class="success-box">
-            🎉 تم تأكيد الحجز بنجاح!<br><br>
-            👤 العميل: <b>{customer_name}</b><br>
-            🎟️ المباراة: <b>{match_name}</b><br>
-            💺 المقعد: <b>{seat_type} - {seat_section}</b><br>
-            💰 السعر النهائي: <b>{final_price} د.ك</b><br>
-            💳 الدفع: <b>{payment_method}</b>
+            {t("success")}<br><br>
+            👤 {t("customer")}: <b>{customer_name}</b><br>
+            🎟️ {t("match")}: <b>{match_name}</b><br>
+            💺 {t("seat")}: <b>{seat_type_label(seat_type)} - {seat_section}</b><br>
+            💰 {t("final_price")}: <b>{final_price} د.ك</b><br>
+            💳 {t("payment")}: <b>{payment_method}</b>
         </div>
         """, unsafe_allow_html=True)
 
         st.markdown(
-            f"<div class='gold-center' style='font-size:22px; margin-top:10px;'>رقم الحجز: #{booking_id}</div>",
+            f"<div class='gold-center' style='font-size:22px; margin-top:10px;'>{t('booking_number')}: #{booking_id}</div>",
             unsafe_allow_html=True
         )
 
         st.download_button(
-            label="📄 تحميل التذكرة PDF",
+            label=t("download_pdf"),
             data=pdf_buffer,
             file_name=f"SmartSeat_Ticket_{booking_id}.pdf",
             mime="application/pdf"
         )
 
         with st.container(border=True):
-            st.markdown('<div class="gold-center"><h3>🎟️ رمز التذكرة (QR Code)</h3></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="gold-center"><h3>{t("qr_title")}</h3></div>', unsafe_allow_html=True)
             qr_col1, qr_col2, qr_col3 = st.columns([1, 1.2, 1])
             with qr_col2:
                 st.image(qr_img, width=220)
-            st.markdown('<div class="gold-caption">اعرض هذا الرمز عند الدخول</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="gold-caption">{t("qr_caption")}</div>', unsafe_allow_html=True)
 
             st.download_button(
-                label="📥 تحميل QR كصورة",
+                label=t("download_qr"),
                 data=qr_bytes,
                 file_name=f"SmartSeat_QR_{booking_id}.png",
                 mime="image/png"
@@ -924,11 +1079,53 @@ if confirm:
         st.session_state.pop("selected_match", None)
 
 # =========================
+# التنقل - هاتف فقط - آخر الصفحة
+# =========================
+if is_mobile:
+    st.markdown(
+        f"""
+        <div class="mobile-only">
+            <div class="quick-box">
+                <div class="quick-title">{t('quick_access')}</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # صف 1
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('home'), key="m_home_1", use_container_width=True):
+            st.switch_page("app.py")
+    with col2:
+        if st.button(t('matches'), key="m_matches_1", use_container_width=True):
+            st.switch_page("pages/0_Match_Details.py")
+
+    # صف 2
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('history'), key="m_history_1", use_container_width=True):
+            st.switch_page("pages/2_History.py")
+    with col2:
+        if st.button(t('analytics'), key="m_analytics_1", use_container_width=True):
+            st.switch_page("pages/3_Analytics.py")
+
+    # صف 3
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('admin'), key="m_admin_1", use_container_width=True):
+            st.switch_page("pages/4_Admin.py")
+    with col2:
+        if st.button(t('support'), key="m_support_1", use_container_width=True):
+            st.switch_page("pages/5_Support.py")
+
+# =========================
 # الفوتر
 # =========================
-st.markdown("""
+st.markdown(f"""
 <div class="footer">
-    SmartSeat Booking • Final Year Project
+    {t("footer")}
 </div>
 """, unsafe_allow_html=True)
 
