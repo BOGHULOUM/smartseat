@@ -18,6 +18,151 @@ st.set_page_config(
 )
 
 # =========================
+# Session State
+# =========================
+if "lang" not in st.session_state:
+    st.session_state.lang = "ar"
+
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if "user_name" not in st.session_state:
+    st.session_state.user_name = ""
+
+# =========================
+# فحص هل الجهاز هاتف
+# =========================
+try:
+    user_agent = st.context.headers.get("User-Agent", "")
+except Exception:
+    user_agent = ""
+
+is_mobile = any(x in user_agent for x in ["Mobile", "Android", "iPhone"])
+
+# =========================
+# الترجمة
+# =========================
+TXT = {
+    "ar": {
+        "lang_label": "Language/اللغة",
+        "arabic": "العربية",
+        "english": "English",
+
+        "need_login": "يجب تسجيل الدخول أولاً للوصول إلى هذه الصفحة.",
+        "back_home": "العودة للرئيسية",
+
+        "page_title": "سجل الحجوزات",
+        "page_subtitle": "Booking History Dashboard",
+        "page_desc": "يمكنك من هنا عرض جميع الحجوزات المسجلة، والبحث عن عميل محدد، واستخدام الفلاتر للوصول السريع إلى البيانات المطلوبة.",
+
+        "sidebar_title": "سجل الحجوزات",
+        "sidebar_desc": "راجع جميع الحجوزات، وابحث أو فلتر حسب البيانات المطلوبة.",
+        "sidebar_note_title": "ملاحظة",
+        "sidebar_note_text": "الحذف متاح فقط من لوحة الإدارة.",
+
+        "metric_total_bookings": "إجمالي الحجوزات",
+        "metric_total_revenue": "إجمالي الإيرادات (د.ك)",
+        "metric_total_tickets": "إجمالي التذاكر",
+
+        "filter_section": "البحث والفلترة",
+        "search_label": "بحث باسم العميل أو رقم الهاتف",
+        "match_filter": "فلترة حسب المباراة",
+        "seat_filter": "فلترة حسب نوع المقعد",
+        "payment_filter": "فلترة حسب طريقة الدفع",
+        "all": "الكل",
+        "filter_note": "لحذف أي حجز، استخدم لوحة الإدارة فقط.",
+
+        "table_section": "جدول الحجوزات",
+        "no_results": "لا توجد حجوزات مطابقة للبحث أو الفلاتر الحالية.",
+
+        "home": "الرئيسية",
+        "matches": "المباريات",
+        "booking": "الحجز",
+        "analytics": "التحليلات",
+        "admin": "الإدارة",
+        "support": "الدعم",
+        "quick_access": "الوصول السريع",
+
+        "col_id": "رقم الحجز",
+        "col_customer_name": "اسم العميل",
+        "col_phone": "رقم الهاتف",
+        "col_booking_date": "التاريخ",
+        "col_match_name": "المباراة",
+        "col_seat_type": "نوع المقعد",
+        "col_seat_section": "القسم",
+        "col_ticket_count": "عدد التذاكر",
+        "col_demand_level": "مستوى الطلب",
+        "col_payment_method": "طريقة الدفع",
+        "col_discount_code": "كود الخصم",
+        "col_base_price": "السعر الأساسي",
+        "col_final_price": "السعر النهائي",
+        "col_booking_time": "وقت الحجز",
+
+        "footer": "SmartSeat History • Final Year Project"
+    },
+    "en": {
+        "lang_label": "Language",
+        "arabic": "العربية",
+        "english": "English",
+
+        "need_login": "You must login first to access this page.",
+        "back_home": "Back to Home",
+
+        "page_title": "Booking History",
+        "page_subtitle": "Booking History Dashboard",
+        "page_desc": "From here, you can view all recorded bookings, search for a specific customer, and use filters for quick access to the required data.",
+
+        "sidebar_title": "Booking History",
+        "sidebar_desc": "Review all bookings and search or filter by the required details.",
+        "sidebar_note_title": "Note",
+        "sidebar_note_text": "Deleting bookings is only available from the Admin panel.",
+
+        "metric_total_bookings": "Total Bookings",
+        "metric_total_revenue": "Total Revenue (KD)",
+        "metric_total_tickets": "Total Tickets",
+
+        "filter_section": "Search & Filters",
+        "search_label": "Search by customer name or phone number",
+        "match_filter": "Filter by match",
+        "seat_filter": "Filter by seat type",
+        "payment_filter": "Filter by payment method",
+        "all": "All",
+        "filter_note": "To delete any booking, please use the Admin panel only.",
+
+        "table_section": "Bookings Table",
+        "no_results": "No bookings match the current search or filters.",
+
+        "home": "Home",
+        "matches": "Matches",
+        "booking": "Booking",
+        "analytics": "Analytics",
+        "admin": "Admin",
+        "support": "Support",
+        "quick_access": "Quick Access",
+
+        "col_id": "Booking ID",
+        "col_customer_name": "Customer Name",
+        "col_phone": "Phone Number",
+        "col_booking_date": "Date",
+        "col_match_name": "Match",
+        "col_seat_type": "Seat Type",
+        "col_seat_section": "Section",
+        "col_ticket_count": "Ticket Count",
+        "col_demand_level": "Demand Level",
+        "col_payment_method": "Payment Method",
+        "col_discount_code": "Discount Code",
+        "col_base_price": "Base Price",
+        "col_final_price": "Final Price",
+        "col_booking_time": "Booking Time",
+
+        "footer": "SmartSeat History • Final Year Project"
+    }
+}
+
+def t(k):
+    return TXT[st.session_state.lang][k]
+
+# =========================
 # اللوقو
 # =========================
 def get_base64(img_path):
@@ -25,6 +170,15 @@ def get_base64(img_path):
         return base64.b64encode(f.read()).decode()
 
 logo_base64 = get_base64(logo_path)
+
+# =========================
+# حماية الصفحة
+# =========================
+if not st.session_state.logged_in:
+    st.warning(t("need_login"))
+    if st.button(t("back_home")):
+        st.switch_page("app.py")
+    st.stop()
 
 # =========================
 # التصميم
@@ -58,7 +212,6 @@ html, body, [class*="css"] {{
     color: white;
 }}
 
-/* سايدبار الكمبيوتر */
 section[data-testid="stSidebar"] {{
     background: linear-gradient(180deg, #0b0b0b 0%, #151515 100%);
     border-left: 1px solid rgba(212,175,55,0.20);
@@ -124,8 +277,8 @@ section[data-testid="stSidebar"] {{
 }}
 
 .block-container {{
-    padding-top: 1.2rem;
-    padding-bottom: 2rem;
+    padding-top: 0.45rem !important;
+    padding-bottom: 1rem !important;
     max-width: 1250px;
 }}
 
@@ -133,12 +286,12 @@ section[data-testid="stSidebar"] {{
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: -5px;
-    margin-bottom: -16px;
+    margin-top: -4px;
+    margin-bottom: -8px;
 }}
 
 .logo-wrap img {{
-    width: 240px;
+    width: 220px;
     max-width: 100%;
     filter: drop-shadow(0px 0px 20px rgba(212,175,55,0.68));
 }}
@@ -150,8 +303,8 @@ section[data-testid="stSidebar"] {{
     padding: 24px 30px;
     text-align: center;
     box-shadow: 0 12px 30px rgba(0,0,0,0.42);
-    margin-top: 0px;
-    margin-bottom: 22px;
+    margin-top: 0;
+    margin-bottom: 12px;
 }}
 
 .hero-title {{
@@ -210,47 +363,26 @@ section[data-testid="stSidebar"] {{
     font-size: 16px;
 }}
 
-.mobile-nav-only {{
-    display: none;
-}}
-
-.mobile-nav-box {{
+.quick-box {{
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(212,175,55,0.25);
-    border-radius: 22px;
-    padding: 14px 12px 6px 12px;
-    margin-bottom: 16px;
-}}
-
-.mobile-nav-title {{
-    color: #D4AF37;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 800;
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+    margin-top: 10px;
     margin-bottom: 10px;
 }}
 
-.mobile-links {{
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
-}}
-
-.mobile-links a {{
-    text-decoration: none !important;
-    color: black !important;
-    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
-    padding: 10px 14px;
-    border-radius: 14px;
-    font-size: 14px;
+.quick-title {{
+    color: #D4AF37;
+    text-align: center;
+    font-size: 18px;
     font-weight: 800;
-    display: inline-block;
-    box-shadow: 0 0 14px rgba(212,175,55,0.20);
+    margin-bottom: 0;
 }}
 
-.mobile-links a:hover {{
-    transform: translateY(-2px);
+.mobile-only {{
+    display: none;
 }}
 
 label {{
@@ -308,16 +440,34 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     font-size: 15px;
 }}
 
+.stButton > button {{
+    width: 100%;
+    min-height: 56px;
+    border: none;
+    border-radius: 18px;
+    padding: 12px 18px;
+    font-size: 18px;
+    font-weight: 800;
+    color: black;
+    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
+    box-shadow: 0 0 18px rgba(212,175,55,0.22);
+    transition: all 0.25s ease;
+}}
+
+.stButton > button:hover {{
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 0 24px rgba(212,175,55,0.36);
+}}
+
 .footer {{
     text-align: center;
     color: #D4AF37;
     font-size: 15px;
     font-weight: 600;
-    margin-top: 24px;
+    margin-top: 16px;
     opacity: 0.95;
 }}
 
-/* الجوال فقط */
 @media (max-width: 768px) {{
     section[data-testid="stSidebar"] {{
         display: none !important;
@@ -331,13 +481,13 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
         display: none !important;
     }}
 
-    .mobile-nav-only {{
+    .mobile-only {{
         display: block !important;
     }}
 
     .block-container {{
-        padding-top: 0.7rem !important;
-        padding-bottom: 1rem !important;
+        padding-top: 0.3rem !important;
+        padding-bottom: 0.7rem !important;
         padding-right: 0.7rem !important;
         padding-left: 0.7rem !important;
         max-width: 100% !important;
@@ -345,7 +495,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 
     .logo-wrap {{
         margin-top: 0 !important;
-        margin-bottom: -6px !important;
+        margin-bottom: -4px !important;
     }}
 
     .logo-wrap img {{
@@ -356,7 +506,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     .hero-box {{
         padding: 18px 14px !important;
         border-radius: 22px !important;
-        margin-bottom: 16px !important;
+        margin-bottom: 10px !important;
     }}
 
     .hero-title {{
@@ -398,7 +548,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
 
     .footer {{
         font-size: 13px !important;
-        margin-top: 16px !important;
+        margin-top: 14px !important;
     }}
 }}
 </style>
@@ -448,38 +598,42 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
+    lang_view = st.selectbox(
+        t("lang_label"),
+        [TXT["ar"]["arabic"], TXT["en"]["english"]],
+        index=0 if st.session_state.lang == "ar" else 1,
+        key="history_lang_sidebar"
+    )
+    st.session_state.lang = "ar" if lang_view == TXT["ar"]["arabic"] else "en"
+
     st.markdown("---")
-    st.markdown("### سجل الحجوزات")
-    st.markdown("راجع جميع الحجوزات، وابحث أو فلتر حسب البيانات المطلوبة.")
-    st.markdown("### ملاحظة")
-    st.markdown("الحذف متاح فقط من لوحة الإدارة.")
+    st.markdown(f"### {t('sidebar_title')}")
+    st.markdown(t("sidebar_desc"))
+    st.markdown(f"### {t('sidebar_note_title')}")
+    st.markdown(t("sidebar_note_text"))
 
 # =========================
-# تنقل الجوال فقط
+# أعلى الصفحة
 # =========================
-st.markdown("""
-<div class="mobile-nav-only">
-    <div class="mobile-nav-box">
-        <div class="mobile-nav-title">التنقل السريع</div>
-        <div class="mobile-links">
-            <a href="/">الرئيسية</a>
-            <a href="/Booking">الحجز</a>
-            <a href="/Analytics">التحليلات</a>
-        </div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+top_col1, top_col2 = st.columns([4, 1])
+with top_col2:
+    page_lang = st.selectbox(
+        t("lang_label"),
+        [TXT["ar"]["arabic"], TXT["en"]["english"]],
+        index=0 if st.session_state.lang == "ar" else 1,
+        key="history_lang_top"
+    )
+    st.session_state.lang = "ar" if page_lang == TXT["ar"]["arabic"] else "en"
 
 # =========================
 # الهيدر
 # =========================
-st.markdown("""
+st.markdown(f"""
 <div class="hero-box">
-    <div class="hero-title">سجل الحجوزات</div>
-    <div class="hero-subtitle">Booking History Dashboard</div>
+    <div class="hero-title">{t('page_title')}</div>
+    <div class="hero-subtitle">{t('page_subtitle')}</div>
     <div class="hero-text">
-        يمكنك من هنا عرض جميع الحجوزات المسجلة، والبحث عن عميل محدد،
-        واستخدام الفلاتر للوصول السريع إلى البيانات المطلوبة.
+        {t('page_desc')}
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -498,7 +652,7 @@ with m1:
     st.markdown(f"""
     <div class="metric-box">
         <div class="metric-number">{len(df)}</div>
-        <div class="metric-label">إجمالي الحجوزات</div>
+        <div class="metric-label">{t('metric_total_bookings')}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -507,7 +661,7 @@ with m2:
     st.markdown(f"""
     <div class="metric-box">
         <div class="metric-number">{total_revenue}</div>
-        <div class="metric-label">إجمالي الإيرادات (د.ك)</div>
+        <div class="metric-label">{t('metric_total_revenue')}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -516,40 +670,42 @@ with m3:
     st.markdown(f"""
     <div class="metric-box">
         <div class="metric-number">{total_tickets}</div>
-        <div class="metric-label">إجمالي التذاكر</div>
+        <div class="metric-label">{t('metric_total_tickets')}</div>
     </div>
     """, unsafe_allow_html=True)
-
-st.write("")
 
 # =========================
 # البحث والفلترة
 # =========================
 with st.container(border=True):
-    st.markdown('<div class="section-title">البحث والفلترة</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-title">{t("filter_section")}</div>', unsafe_allow_html=True)
+
+    match_options = sorted(df["match_name"].dropna().unique().tolist()) if not df.empty else []
+    seat_options = sorted(df["seat_type"].dropna().unique().tolist()) if not df.empty else []
+    payment_options = sorted(df["payment_method"].dropna().unique().tolist()) if not df.empty else []
 
     f1, f2 = st.columns(2)
     with f1:
-        search_text = st.text_input("بحث باسم العميل أو رقم الهاتف")
+        search_text = st.text_input(t("search_label"))
     with f2:
         selected_match = st.selectbox(
-            "فلترة حسب المباراة",
-            ["الكل"] + (sorted(df["match_name"].dropna().unique().tolist()) if not df.empty else [])
+            t("match_filter"),
+            [t("all")] + match_options
         )
 
     f3, f4 = st.columns(2)
     with f3:
         selected_seat = st.selectbox(
-            "فلترة حسب نوع المقعد",
-            ["الكل"] + (sorted(df["seat_type"].dropna().unique().tolist()) if not df.empty else [])
+            t("seat_filter"),
+            [t("all")] + seat_options
         )
     with f4:
         selected_payment = st.selectbox(
-            "فلترة حسب طريقة الدفع",
-            ["الكل"] + (sorted(df["payment_method"].dropna().unique().tolist()) if not df.empty else [])
+            t("payment_filter"),
+            [t("all")] + payment_options
         )
 
-    st.markdown('<div class="gold-note">لحذف أي حجز، استخدم لوحة الإدارة فقط.</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="gold-note">{t("filter_note")}</div>', unsafe_allow_html=True)
 
 # =========================
 # الفلترة
@@ -563,50 +719,91 @@ if search_text.strip():
         filtered_df["phone"].astype(str).str.contains(s, case=False, na=False)
     ]
 
-if selected_match != "الكل":
+if selected_match != t("all"):
     filtered_df = filtered_df[filtered_df["match_name"] == selected_match]
 
-if selected_seat != "الكل":
+if selected_seat != t("all"):
     filtered_df = filtered_df[filtered_df["seat_type"] == selected_seat]
 
-if selected_payment != "الكل":
+if selected_payment != t("all"):
     filtered_df = filtered_df[filtered_df["payment_method"] == selected_payment]
 
 # =========================
 # الجدول
 # =========================
-st.write("")
 with st.container(border=True):
-    st.markdown('<div class="section-title">جدول الحجوزات</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-title">{t("table_section")}</div>', unsafe_allow_html=True)
 
     if filtered_df.empty:
-        st.markdown('<div class="warning-box">لا توجد حجوزات مطابقة للبحث أو الفلاتر الحالية.</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="warning-box">{t("no_results")}</div>', unsafe_allow_html=True)
     else:
         display_df = filtered_df.copy()
         display_df = display_df.rename(columns={
-            "id": "رقم الحجز",
-            "customer_name": "اسم العميل",
-            "phone": "رقم الهاتف",
-            "booking_date": "التاريخ",
-            "match_name": "المباراة",
-            "seat_type": "نوع المقعد",
-            "seat_section": "القسم",
-            "ticket_count": "عدد التذاكر",
-            "demand_level": "مستوى الطلب",
-            "payment_method": "طريقة الدفع",
-            "discount_code": "كود الخصم",
-            "base_price": "السعر الأساسي",
-            "final_price": "السعر النهائي",
-            "booking_time": "وقت الحجز"
+            "id": t("col_id"),
+            "customer_name": t("col_customer_name"),
+            "phone": t("col_phone"),
+            "booking_date": t("col_booking_date"),
+            "match_name": t("col_match_name"),
+            "seat_type": t("col_seat_type"),
+            "seat_section": t("col_seat_section"),
+            "ticket_count": t("col_ticket_count"),
+            "demand_level": t("col_demand_level"),
+            "payment_method": t("col_payment_method"),
+            "discount_code": t("col_discount_code"),
+            "base_price": t("col_base_price"),
+            "final_price": t("col_final_price"),
+            "booking_time": t("col_booking_time")
         })
         st.dataframe(display_df, use_container_width=True)
 
 # =========================
+# التنقل - هاتف فقط - آخر الصفحة
+# =========================
+if is_mobile:
+    st.markdown(
+        f"""
+        <div class="mobile-only">
+            <div class="quick-box">
+                <div class="quick-title">{t('quick_access')}</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # صف 1
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('home'), key="m_home_2", use_container_width=True):
+            st.switch_page("app.py")
+    with col2:
+        if st.button(t('matches'), key="m_matches_2", use_container_width=True):
+            st.switch_page("pages/0_Match_Details.py")
+
+    # صف 2
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('booking'), key="m_booking_2", use_container_width=True):
+            st.switch_page("pages/1_Booking.py")
+    with col2:
+        if st.button(t('analytics'), key="m_analytics_2", use_container_width=True):
+            st.switch_page("pages/3_Analytics.py")
+
+    # صف 3
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(t('admin'), key="m_admin_2", use_container_width=True):
+            st.switch_page("pages/4_Admin.py")
+    with col2:
+        if st.button(t('support'), key="m_support_2", use_container_width=True):
+            st.switch_page("pages/5_Support.py")
+
+# =========================
 # الفوتر
 # =========================
-st.markdown("""
+st.markdown(f"""
 <div class="footer">
-    SmartSeat History • Final Year Project
+    {t("footer")}
 </div>
 """, unsafe_allow_html=True)
 
