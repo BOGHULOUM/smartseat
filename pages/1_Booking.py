@@ -563,6 +563,21 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     overflow: hidden !important;
 }}
 
+/* أزرار وسلايدر مستوى الطلب */
+.stSlider [data-baseweb="slider"] > div > div {{
+    background: linear-gradient(90deg, #3a3a3a 0%, #4a4a4a 100%) !important;
+}}
+
+.stSlider [role="slider"] {{
+    background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%) !important;
+    border: 2px solid rgba(255,255,255,0.25) !important;
+    box-shadow: 0 0 12px rgba(212,175,55,0.35) !important;
+}}
+
+.stSlider [data-baseweb="slider"] div[style*="background-color"] {{
+    background: linear-gradient(90deg, #b78d1d 0%, #d4af37 55%, #ffd700 100%) !important;
+}}
+
 .stButton > button {{
     width: 100%;
     min-height: 64px;
@@ -881,6 +896,28 @@ if "selected_match" in st.session_state:
         default_index = match_options.index(selected_match)
 
 # =========================
+# مستوى الطلب الافتراضي لكل مباراة
+# =========================
+match_demand_defaults = {
+    "برشلونة × ريال مدريد": 9,
+    "الكويت × القادسية": 8,
+    "العربي × السالمية": 6,
+    "مانشستر سيتي × ليفربول": 7,
+}
+
+default_match_name = match_options[default_index]
+
+if "booking_match_name" not in st.session_state:
+    st.session_state.booking_match_name = default_match_name
+
+if "demand_level_value" not in st.session_state:
+    st.session_state.demand_level_value = match_demand_defaults.get(default_match_name, 5)
+
+def on_match_change():
+    selected = st.session_state.booking_match_name
+    st.session_state.demand_level_value = match_demand_defaults.get(selected, 5)
+
+# =========================
 # بيانات الحجز
 # =========================
 with st.container(border=True):
@@ -901,7 +938,13 @@ with st.container(border=True):
 
     c5, c6 = st.columns(2)
     with c5:
-        match_name = st.selectbox(t("match_name"), match_options, index=default_index)
+        match_name = st.selectbox(
+            t("match_name"),
+            match_options,
+            index=match_options.index(st.session_state.booking_match_name) if st.session_state.booking_match_name in match_options else default_index,
+            key="booking_match_name",
+            on_change=on_match_change
+        )
     with c6:
         seat_type = st.selectbox(t("seat_type"), list(seat_prices.keys()), format_func=seat_type_label)
 
@@ -909,7 +952,12 @@ with st.container(border=True):
     with c7:
         seat_section = st.selectbox(t("seat_section"), list(section_prices.keys()))
     with c8:
-        demand_level = st.slider(t("demand_level"), min_value=1, max_value=10, value=5)
+        demand_level = st.slider(
+            t("demand_level"),
+            min_value=1,
+            max_value=10,
+            key="demand_level_value"
+        )
 
     c9, c10 = st.columns(2)
     with c9:
