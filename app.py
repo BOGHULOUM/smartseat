@@ -14,7 +14,7 @@ from reportlab.lib.utils import ImageReader
 # =========================
 # إعداد الصفحة
 # =========================
-base_dir = Path(__file__).parent.parent
+base_dir = Path(__file__).parent
 logo_path = base_dir / "assets" / "logo.png"
 db_path = base_dir / "tickets.db"
 
