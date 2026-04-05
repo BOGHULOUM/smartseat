@@ -563,7 +563,21 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     overflow: hidden !important;
 }}
 
-/* أزرار وسلايدر مستوى الطلب */
+/* مستوى الطلب */
+.stSlider {{
+    direction: ltr !important;
+    width: 100% !important;
+}}
+
+.stSlider > div {{
+    width: 100% !important;
+}}
+
+.stSlider [data-baseweb="slider"] {{
+    width: 100% !important;
+    overflow: hidden !important;
+}}
+
 .stSlider [data-baseweb="slider"] > div > div {{
     background: linear-gradient(90deg, #3a3a3a 0%, #4a4a4a 100%) !important;
 }}
@@ -952,18 +966,21 @@ with st.container(border=True):
     with c7:
         seat_section = st.selectbox(t("seat_section"), list(section_prices.keys()))
     with c8:
-        demand_level = st.slider(
-            t("demand_level"),
-            min_value=1,
-            max_value=10,
-            key="demand_level_value"
-        )
+        payment_method = st.selectbox(t("payment_method"), payment_methods)
+
+    # مستوى الطلب في سطر مستقل
+    demand_level = st.slider(
+        t("demand_level"),
+        min_value=1,
+        max_value=10,
+        key="demand_level_value"
+    )
 
     c9, c10 = st.columns(2)
     with c9:
-        payment_method = st.selectbox(t("payment_method"), payment_methods)
-    with c10:
         discount_code = st.text_input(t("discount_code"), placeholder=t("discount_placeholder"))
+    with c10:
+        st.empty()
 
 # =========================
 # حساب السعر
@@ -1141,7 +1158,6 @@ if is_mobile:
         unsafe_allow_html=True
     )
 
-    # صف 1
     col1, col2 = st.columns(2)
     with col1:
         if st.button(t('home'), key="m_home_1", use_container_width=True):
@@ -1150,7 +1166,6 @@ if is_mobile:
         if st.button(t('matches'), key="m_matches_1", use_container_width=True):
             st.switch_page("pages/0_Match_Details.py")
 
-    # صف 2
     col1, col2 = st.columns(2)
     with col1:
         if st.button(t('history'), key="m_history_1", use_container_width=True):
@@ -1159,7 +1174,6 @@ if is_mobile:
         if st.button(t('analytics'), key="m_analytics_1", use_container_width=True):
             st.switch_page("pages/3_Analytics.py")
 
-    # صف 3
     col1, col2 = st.columns(2)
     with col1:
         if st.button(t('admin'), key="m_admin_1", use_container_width=True):
